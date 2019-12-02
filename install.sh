@@ -20,7 +20,7 @@ done
 echo "::: Changing theme"
 NEW_THEME_LINE="zstyle ':prezto:module:prompt' theme '$THEME'"
 LINE=`awk "/zstyle ':prezto:module:prompt' theme/ {print FNR}" "${ZDOTDIR:-$HOME}/.zpreztorc"`
-sed -i "${LINE}s/.*/${NEW_THEME_LINE}/" "${ZDOTDIR:-$HOME}/.zpreztorc"
+sed --in-place --follow-symlinks "${LINE}s/.*/${NEW_THEME_LINE}/" "${ZDOTDIR:-$HOME}/.zpreztorc"
 
 echo "::: Removing .git directory"
 rm -rf "${ZDOTDIR:-$HOME}/.zprezto/.git"
