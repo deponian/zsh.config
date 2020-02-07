@@ -243,7 +243,11 @@ zstyle ':prezto:module:fzf' key-bindings 'yes'
 zstyle ':prezto:module:fzf' completion 'yes'
 
 # Set height of the fzf results (comment for full screen)
-zstyle ':prezto:module:fzf' height '30%'
+zstyle ':prezto:module:fzf' height '70%'
+
+# Set width and position of the fzf preview window (comment for default which is right:50%)
+# (right|left|top|down):NUMBER[%]
+zstyle ':prezto:module:fzf' width 'right:70%'
 
 # Open fzf results in a tmux pane (if using tmux)
 zstyle ':prezto:module:fzf' tmux 'yes'

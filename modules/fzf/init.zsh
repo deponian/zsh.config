@@ -22,6 +22,9 @@ export FZF_DEFAULT_OPTS=""
 # Set height of fzf results
 zstyle -s ':prezto:module:fzf' height FZF_HEIGHT
 
+# Set width of fzf preview window
+zstyle -s ':prezto:module:fzf' width FZF_WIDTH
+
 # Open fzf in a tmux pane if using tmux
 if zstyle -t ':prezto:module:fzf' tmux && [ -n "$TMUX_PANE" ]; then
   export FZF_TMUX=1
@@ -34,14 +37,9 @@ else
   fi
 fi
 
-__fzf_prog() {
-  [ -n "$TMUX_PANE" ] && [ "${FZF_TMUX:-0}" != 0 ] && [ ${LINES:-40} -gt 15 ] \
-    && echo "fzf-tmux -d${FZF_TMUX_HEIGHT}" || echo "fzf"
-}
-
 # Use fd or ripgrep if available
 if (( $+commands[fd] )); then
-  export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden --color=always"
+  export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden --color=always --exclude .git"
   _fzf_compgen_path() {
     fd --type file --follow --hidden --exclude .git "$1"
   }
@@ -55,7 +53,7 @@ fi
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Uncomment to use --inline-info option
-export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --inline-info --ansi"
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --inline-info --ansi --tabstop=4"
 
 # Set colors defined by user
 source "${0:h}/external/colors.zsh"
@@ -65,23 +63,15 @@ if [[ ! -z "$FZF_COLOR" && ${fzf_colors["$FZF_COLOR"]} ]]; then
 fi
 
 # Use preview window with Ctrl-T
-export FZF_CTRL_T_OPTS="--preview '(bat --color=always --style=header,grid --line-range :300 {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_CTRL_T_OPTS="--preview-window=${FZF_WIDTH} --preview '(bat --tabs 2 --color=always --style=header,grid --line-range :300 {} || cat {} | head -300) 2> /dev/null'"
 
 # If tree command is installed, show directory contents in preview pane when
 # using ALT-C
-if (( $+commands[tree] )); then
-  export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+if (( $+commands[exa] )); then
+  export FZF_ALT_C_OPTS="--preview 'exa --color=always -L 1 -T {} | head -300'"
+else
+  if (( $+commands[tree] )); then
+    export FZF_ALT_C_OPTS="--preview 'tree -L 1 -C {} | head -300'"
+  fi
 fi
 
-# If fasd is loaded, pipe output to fzf
-# Note that the `fzf-tmux` command works regardless of whether or not the user is
-# in a tmux session. If no tmux session is detected, it acts just like `fzf`
-if zstyle -t ':prezto:module:fasd' loaded; then
-  unalias j 2>/dev/null
-  __fzf_cd() {
-    local dir fzf
-    fzf=$(__fzf_prog)
-    dir="$(fasd -Rdl "$1" | ${=fzf} -1 -0 --no-sort +m)" && cd "${dir}" || return 1
-  }
-  alias j='__fzf_cd'
-fi
