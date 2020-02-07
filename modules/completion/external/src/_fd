@@ -70,7 +70,7 @@ executable (x), empty (e)]: :(f file d directory l symlink x executable e empty)
 '--help[Prints help information]' \
 '-V[Prints version information]' \
 '--version[Prints version information]' \
-'::pattern -- the search pattern: a regular expression unless '--glob' is used (optional):_files' \
+'::pattern -- the search pattern\: a regular expression unless '--glob' is used (optional):_files' \
 '::path -- the root directory for the filesystem search (optional):_files' \
 && ret=0
     
