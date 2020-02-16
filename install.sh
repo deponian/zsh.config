@@ -8,6 +8,15 @@ then
     exit
 fi
 
+echo "::: Checking existing zprezto files"
+if [[ -d "${ZDOTDIR:-$HOME}/.zprezto" ]] then
+	echo "::: Removing old files. Preserving .zhistory"
+	cd "${ZDOTDIR:-$HOME}"
+	mv .zhistory zhistory
+	rm -rf .z* 
+	mv zhistory .zhistory
+fi
+
 echo "::: Cloning repository"
 git clone --recursive https://github.com/deponian/zsh.config.git "${ZDOTDIR:-$HOME}/.zprezto"
 
@@ -22,11 +31,11 @@ NEW_THEME_LINE="zstyle ':prezto:module:prompt' theme '$THEME'"
 LINE=`awk "/zstyle ':prezto:module:prompt' theme/ {print FNR}" "${ZDOTDIR:-$HOME}/.zpreztorc"`
 sed --in-place --follow-symlinks "${LINE}s/.*/${NEW_THEME_LINE}/" "${ZDOTDIR:-$HOME}/.zpreztorc"
 
-echo "::: Removing .git directory"
-rm -rf "${ZDOTDIR:-$HOME}/.zprezto/.git"
+#echo "::: Removing .git directory"
+#rm -rf "${ZDOTDIR:-$HOME}/.zprezto/.git"
 
-echo "::: Removing install.sh"
-rm "${ZDOTDIR:-$HOME}/.zprezto/install.sh"
+#echo "::: Removing install.sh"
+#rm "${ZDOTDIR:-$HOME}/.zprezto/install.sh"
 
 echo "::: Changing default shell to zsh"
 chsh -s /usr/bin/zsh
