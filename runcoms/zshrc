@@ -17,3 +17,6 @@ unsetopt correct
 alias ip='ip -c'
 alias rg='rg --smart-case --hidden --no-ignore --max-columns=150 --max-columns-preview --no-config'
 alias bat='bat --paging=never --theme="OneHalfDark"'
+
+#so as not to be disturbed by Ctrl-S ctrl-Q in terminals:
+stty -ixon
