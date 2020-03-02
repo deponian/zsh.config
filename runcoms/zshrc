@@ -15,6 +15,7 @@ unsetopt correct
 
 # Aliases
 alias ip='ip -c'
+alias sed='sed -E'
 alias rg='rg --smart-case --hidden --no-ignore --max-columns=150 --max-columns-preview --no-config'
 alias bat='bat --paging=never --theme="OneHalfDark"'
 
