@@ -4,8 +4,8 @@ THEME="$1"
 
 if [[ -z "$THEME" ]]
 then
-    echo "You have to specify theme name. Choose one of these: user, root, server"
-    exit
+	echo "You have to specify theme name. Choose one of these: user, root, server"
+	exit
 fi
 
 echo "::: Checking existing zprezto files"
@@ -13,8 +13,10 @@ if [[ -d "${ZDOTDIR:-$HOME}/.zprezto" ]] then
 	echo "::: Removing old files. Preserving .zhistory"
 	cd "${ZDOTDIR:-$HOME}"
 	mv .zhistory zhistory
-	rm -rf .z* 
+	rm -rf .z*
 	mv zhistory .zhistory
+else
+	echo "::::: There are none of them."
 fi
 
 echo "::: Cloning repository"
@@ -23,7 +25,7 @@ git clone --recursive https://github.com/deponian/zsh.config.git "${ZDOTDIR:-$HO
 echo "::: Creating symlinks in home directory"
 setopt EXTENDED_GLOB
 for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
-  ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+	ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
 done
 
 echo "::: Changing theme"
@@ -38,5 +40,7 @@ sed --in-place --follow-symlinks "${LINE}s/.*/${NEW_THEME_LINE}/" "${ZDOTDIR:-$H
 #rm "${ZDOTDIR:-$HOME}/.zprezto/install.sh"
 
 echo "::: Changing default shell to zsh"
-chsh -s /usr/bin/zsh
+until chsh -s /usr/bin/zsh; do
+	echo "Wrong password."
+done
 
