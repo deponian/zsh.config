@@ -14,13 +14,19 @@ if [[ "$OSTYPE" == darwin* ]]; then
 fi
 
 #
-# Editors
+# Editors and pagers
 #
 
 export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
 export MANPAGER="vim -c MANPAGER -"
+
+#
+# Time
+#
+#
+export TIMEFMT=$':::::::::::::::::::\nCPU\t%P\nuser\t%*U\nsystem\t%*S\ntotal\t%*E'
 
 #
 # Language
