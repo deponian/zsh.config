@@ -40,42 +40,60 @@ function prompt_user_setup {
       "%F{202}"	# 1 Hostname
       "%F{196}"	# 2 Login
       "%F{226}"	# 3 Current directory
-	  "%F{7}"	# 4 Delimeter between hostname and login
-	  "%F{241}"	# 5 Git. Branch name
-	  "%F{10}"	# 6 Git. Added files
-	  "%F{202}"	# 7 Git. Deletes files
-	  "%F{220}"	# 8 Git. Modified files
-	  "%F{124}"	# 9 Git. Untracked files
+      "%F{7}"	# 4 Delimeter between hostname and login
+      "%F{243}"	# 5 Git. Branch name
+      "%F{10}"	# 6 Git. Added files
+      "%F{202}"	# 7 Git. Deletes files
+      "%F{220}"	# 8 Git. Modified files
+      "%F{124}"	# 9 Git. Untracked files
+      "%F{75}"	# 10 Git. [Action] in progress (merging, rebasing, etc.)
+      "%F{67}"	# 11 Git. Action [in progress] (merging, rebasing, etc.)
     )
   else
     colors=(
       "%F{yellow}"	# 1 Hostname	
       "%F{red}"		# 2 Login
       "%F{white}"	# 3 Current directory
-      "%F{white}"	# 4 Delimeter between hostname and login
-	  "%F{cyan}"	# 5 Git. Branch name
-	  "%F{green}"	# 6 Git. Added files
-	  "%F{red}"		# 7 Git. Deletes files
-	  "%F{yellow}"	# 8 Git. Modified files
-	  "%F{red}"		# 9 Git. Untracked files
+      "%F{white}"   # 4 Delimeter between hostname and login
+      "%F{cyan}"    # 5 Git. Branch name
+      "%F{green}"   # 6 Git. Added files
+      "%F{red}"     # 7 Git. Deletes files
+      "%F{yellow}"  # 8 Git. Modified files
+      "%F{red}"     # 9 Git. Untracked files
+      "%F{green}"   # 10 Git. [Action] in progress (merging, rebasing, etc.)
+      "%F{white}"   # 11 Git. Action [in progress] (merging, rebasing, etc.)
     )
   fi
 
   # Set dot symbol for git status in case non UTF-8 terminal
   if [[ "$TERM" == (dumb|linux|*bsd*) ]]; then
-	  DOT='*'
+    DOT='*'
   else
-	  DOT='●'
+    DOT='●'
   fi
 
   # Set git-info parameters.
   zstyle ':prezto:module:git:info' verbose 'yes'
-  zstyle ':prezto:module:git:info:branch' format "${colors[5]}%b%f"
+  # git main params
+  zstyle ':prezto:module:git:info:branch' format "${colors[5]}%b%f "
   zstyle ':prezto:module:git:info:added' format "${colors[6]}$DOT%f "
   zstyle ':prezto:module:git:info:deleted' format "${colors[7]}$DOT%f "
   zstyle ':prezto:module:git:info:modified' format "${colors[8]}$DOT%f "
   zstyle ':prezto:module:git:info:untracked' format "${colors[9]}$DOT%f "
-  zstyle ':prezto:module:git:info:keys' format 'prompt' '%d%u%m%a%b'
+  # git actions
+  zstyle ':prezto:module:git:info:action' format ":: ${colors[10]}%s%f ${colors[11]}in progress%f"
+  zstyle ':prezto:module:git:info:action:apply' format "applying of patch"
+  zstyle ':prezto:module:git:info:action:bisect' format "bisect"
+  zstyle ':prezto:module:git:info:action:cherry-pick' format "cherry-pick"
+  zstyle ':prezto:module:git:info:action:cherry-pick-sequence' format "cherry-pick"
+  zstyle ':prezto:module:git:info:action:merge' format "merge"
+  zstyle ':prezto:module:git:info:action:rebase' format "rebase"
+  zstyle ':prezto:module:git:info:action:rebase-interactive' format "interactive rebase"
+  zstyle ':prezto:module:git:info:action:rebase-merge' format "merge rebase"
+  zstyle ':prezto:module:git:info:action:revert' format "revert"
+  zstyle ':prezto:module:git:info:action:revert-sequence' format "revert"
+  # prompt git info
+  zstyle ':prezto:module:git:info:keys' format 'prompt' '%d%u%m%a%b%s'
 
   # Define prompts.
   PROMPT='${colors[2]}%n%f${colors[4]}@%f${colors[1]}%m%f ${colors[3]}%~%f '
