@@ -37,6 +37,12 @@ if [[ -z "$LANG" ]]; then
 fi
 
 #
+# Date format
+#
+
+export LC_TIME='en_GB.UTF-8'
+
+#
 # Paths
 #
 
