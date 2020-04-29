@@ -23,9 +23,15 @@ export PAGER='less'
 export MANPAGER="vim -c MANPAGER -"
 
 #
+# Fix for vim as manpager on Fedora (see https://github.com/vim/vim/issues/2823)
+#
+
+export GROFF_NO_SGR=1
+
+#
 # Time
 #
-#
+
 export TIMEFMT=$':::::::::::::::::::\nCPU\t%P\nuser\t%*U\nsystem\t%*S\ntotal\t%*E'
 
 #
