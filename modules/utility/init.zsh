@@ -44,8 +44,6 @@ alias history='noglob history'
 alias locate='noglob locate'
 alias rake='noglob rake'
 alias rsync='noglob rsync'
-alias scp='noglob scp'
-alias sftp='noglob sftp'
 
 # Define general aliases.
 alias _='sudo'
