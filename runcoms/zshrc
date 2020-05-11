@@ -14,11 +14,11 @@ fi
 unsetopt correct
 
 # Aliases
-alias ip='ip -c'
+alias ip='ip -color=auto'
 alias sed='sed -E'
 alias rg='rg --smart-case --hidden --no-ignore --max-columns=150 --max-columns-preview --no-config'
 alias bat='bat --paging=never --theme="OneHalfDark"'
 alias fd='fd --hidden --no-ignore'
 
-#so as not to be disturbed by Ctrl-S ctrl-Q in terminals:
+# turn off flow control (prevent CTRL-S from capturing all output)
 stty -ixon
