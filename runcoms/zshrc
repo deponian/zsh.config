@@ -19,6 +19,9 @@ alias sed='sed -E'
 alias rg='rg --smart-case --hidden --no-ignore --max-columns=150 --max-columns-preview --no-config'
 alias bat='bat --paging=never --theme="OneHalfDark"'
 alias fd='fd --hidden --no-ignore'
+if command -v nvim &> /dev/null; then
+  alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
+fi
 
 # turn off flow control (prevent CTRL-S from capturing all output)
 stty -ixon
