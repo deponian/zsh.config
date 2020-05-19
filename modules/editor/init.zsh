@@ -294,7 +294,7 @@ bindkey -M emacs "$key_info[Control]X$key_info[Control]B" vi-find-prev-char
 bindkey -M emacs "$key_info[Control]X$key_info[Control]]" vi-match-bracket
 
 # Edit command in an external editor.
-bindkey -M emacs "$key_info[Control]X$key_info[Control]E" edit-command-line
+bindkey -M emacs "$key_info[Control]X$key_info[Control]X" edit-command-line
 
 if (( $+widgets[history-incremental-pattern-search-backward] )); then
   bindkey -M emacs "$key_info[Control]R" \
@@ -314,7 +314,7 @@ bindkey -M emacs "$key_info[Escape];" pound-toggle
 #
 
 # Edit command in an external editor emacs style (v is used for visual mode)
-bindkey -M vicmd "$key_info[Control]X$key_info[Control]E" edit-command-line
+bindkey -M vicmd "$key_info[Control]X$key_info[Control]X" edit-command-line
 
 # Undo/Redo
 bindkey -M vicmd "u" undo
