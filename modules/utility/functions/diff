@@ -10,7 +10,7 @@ function diff {
     && (( $+commands[colordiff] )); then
       command colordiff "$@"
   else
-    command diff "$@"
+    command diff --color=auto "$@"
   fi
 }
 
