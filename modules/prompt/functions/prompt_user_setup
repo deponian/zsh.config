@@ -81,7 +81,7 @@ function prompt_user_setup {
   zstyle ':prezto:module:git:info:modified' format "${colors[8]}$DOT%f "
   zstyle ':prezto:module:git:info:untracked' format "${colors[9]}$DOT%f "
   # git actions
-  zstyle ':prezto:module:git:info:action' format ":: ${colors[10]}%s%f ${colors[11]}in progress%f"
+  zstyle ':prezto:module:git:info:action' format " ${colors[10]}%s%f ${colors[11]}in progress%f"
   zstyle ':prezto:module:git:info:action:apply' format "applying of patch"
   zstyle ':prezto:module:git:info:action:bisect' format "bisect"
   zstyle ':prezto:module:git:info:action:cherry-pick' format "cherry-pick"
