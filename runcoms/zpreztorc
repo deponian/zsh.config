@@ -82,7 +82,7 @@ zstyle ':prezto:module:git:status:ignore' submodules 'all'
 zstyle ':prezto:module:git:alias' skip 'no'
 
 # Git log -- medium format
-zstyle ':prezto:module:git:log:medium' format '%C(bold)Commit:%C(reset) %C(#5398dd)%H%C(#f2684b)%d%n%C(bold)Author:%C(reset) %C(#87ff00)%an <%ae>%n%C(bold)Date:%C(reset)   %C(#00d7af)%ai (%ar)%C(reset)%n%+B'
+zstyle ':prezto:module:git:log:medium' format '%C(#5398dd)commit %H%C(#f2684b)%d%n%C(#c2c2c2)Author: %C(#00d7af)%an <%ae>%n%C(#c2c2c2)Date:   %C(#ca93db)%ad (%ar)%C(reset)%n%n    %s%n'
 
 # Git log -- online format
 zstyle ':prezto:module:git:log:oneline' format '%C(#5398dd)%h %C(#00d7af)%cd%C(reset) %C(#969696)::%C(reset)%C(#f2684b)%d %C(#d9d9d9)%s'

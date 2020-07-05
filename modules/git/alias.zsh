@@ -121,9 +121,10 @@ if ! zstyle -t ':prezto:module:git:alias' skip 'yes'; then
   alias giX='git rm -rf --cached'
 
   # Log (l)
-  alias gl='git log --topo-order --pretty=format:"${_git_log_medium_format}"'
-  alias gls='git log --topo-order --stat --pretty=format:"${_git_log_medium_format}"'
-  alias gld='git log --topo-order --stat --patch --full-diff --pretty=format:"${_git_log_medium_format}"'
+  alias gl='git log --topo-order --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
+  alias gls='git log --topo-order --stat --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
+  alias glf='git log --topo-order --stat --patch --full-diff --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
+  alias glp='git log --topo-order --patch --full-diff --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
   alias glo='git log --topo-order --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
   alias glg='git log --topo-order --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
   alias gla='git log --topo-order --all --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
