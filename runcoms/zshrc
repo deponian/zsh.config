@@ -14,7 +14,7 @@ fi
 alias sudo='sudo '
 alias ip='ip -color=auto'
 alias sed='sed -E'
-alias rg='rg --smart-case --hidden --no-ignore --max-columns=150 --max-columns-preview --no-config'
+alias rg='rg --smart-case --hidden --no-ignore --no-config'
 alias bat='bat --paging=never --theme="OneHalfDark"'
 alias fd='fd --hidden --no-ignore'
 alias rsync='rsync -a --progress'
