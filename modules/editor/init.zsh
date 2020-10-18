@@ -291,7 +291,8 @@ bindkey -M emacs "$key_info[Escape]_" redo
 bindkey -M emacs "$key_info[Control]X$key_info[Control]B" vi-find-prev-char
 
 # Match bracket.
-bindkey -M emacs "$key_info[Control]X$key_info[Control]]" vi-match-bracket
+bindkey -M emacs "$key_info[Control][" vi-match-bracket
+bindkey -M emacs "$key_info[Control]]" vi-match-bracket
 
 # Edit command in an external editor.
 bindkey -M emacs "$key_info[Control]X$key_info[Control]X" edit-command-line
@@ -306,7 +307,7 @@ fi
 # Toggle comment at the start of the line. Note that we use pound-toggle which
 # is similar to pount insert, but meant to work around some issues that were
 # being seen in iTerm.
-bindkey -M emacs "$key_info[Escape];" pound-toggle
+bindkey -M emacs "$key_info[Escape]3" pound-toggle
 
 
 #
@@ -390,22 +391,26 @@ for keymap in 'emacs' 'viins'; do
   bindkey -M "$keymap" "$key_info[Left]" backward-char
   bindkey -M "$keymap" "$key_info[Right]" forward-char
 
+  # vim-like motions
+  bindkey -M "$keymap" "$key_info[Control]H" backward-char
+  bindkey -M "$keymap" "$key_info[Control]L" forward-char
+
   # Expand history on space.
   bindkey -M "$keymap" ' ' magic-space
 
   # Clear screen.
-  bindkey -M "$keymap" "$key_info[Control]L" clear-screen
+  bindkey -M "$keymap" "$key_info[Control]P" clear-screen
 
   # Expand command name to full path.
   for key in "$key_info[Escape]"{E,e}
     bindkey -M "$keymap" "$key" expand-cmd-path
 
   # Duplicate the previous word.
-  for key in "$key_info[Escape]"{M,m}
+  for key in "$key_info[Escape]"{C,c}
     bindkey -M "$keymap" "$key" copy-prev-shell-word
 
   # Use a more flexible push-line.
-  for key in "$key_info[Control]Q" "$key_info[Escape]"{q,Q}
+  for key in "$key_info[Control]Q"
     bindkey -M "$keymap" "$key" push-line-or-edit
 
   # Bind Shift + Tab to go to the previous menu item.
@@ -424,10 +429,12 @@ for keymap in 'emacs' 'viins'; do
     expand-or-complete-with-indicator
 
   # Insert 'sudo ' at the beginning of the line.
-  bindkey -M "$keymap" "$key_info[Control]X$key_info[Control]S" prepend-sudo
+  for key in "$key_info[Escape]"{S,s}
+    bindkey -M "$keymap" "$key" prepend-sudo
 
   # control-space expands all aliases, including global
-  bindkey -M "$keymap" "$key_info[Control] " glob-alias
+  for key in "$key_info[Escape]"{Q,q}
+    bindkey -M "$keymap" "$key" glob-alias
 done
 
 # Delete key deletes character in vimcmd cmd mode instead of weird default functionality
