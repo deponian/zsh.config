@@ -14,11 +14,11 @@ fi
 alias sudo='sudo '
 alias ip='ip -color=auto'
 alias sed='sed -E'
-alias rg='rg --smart-case --hidden --no-ignore --no-config --heading \
+alias rg='rg --smart-case --hidden --no-ignore --no-config --heading --follow \
 	--context-separator "\n8<-------8<-------8<-------8<-------8<-------8<-------8<-------8<-------8<-------8<-------8<-------\n"'
 alias bat='bat --paging=never --theme="OneHalfDark"'
 alias fd='fd --hidden --no-ignore'
-alias rsync='rsync -a --progress'
+alias rsync='rsync --progress'
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
 fi
