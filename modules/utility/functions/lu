@@ -6,11 +6,11 @@
 #
 
 lu(){
-	local filepath # most likely path to directory
-	local filename dirname start end size
+	dirpath="${1:-.}"
 
-	filepath="${1:-.}"
-	for file in "${filepath}"/*; do
+	files=("${dirpath}"/*(N)) # zsh's in-place nullglob
+
+	for file in "${files[@]}"; do
 		filename=$(basename "${file}")
 		dirname=$(dirname "${file}")
 
