@@ -1,0 +1,38 @@
+#
+# -- ctc -- copy files to clipboard
+# Script makes tar-archive, converts to base64 and sends to clipboard,
+# if file or directory names are passed as arguments and vice versa if no arguments are passed.
+#
+
+ctc(){
+	# save IFS and replace it with new one
+	OLD_IFS="${IFS}"
+	DEFAULT_IFS=$'\n\t'
+	IFS="${DEFAULT_IFS}"
+
+	files=("$@")
+
+	# If no args then copy from clipboard
+	if [[ "${#files[@]}" == 0 ]]; then
+		xclip -o | base64 -d | tar -xzvf -
+		return
+	fi
+
+	# Check if files exist
+	for file in "${files[@]}"; do
+		if [[ ! -f "$file" ]] && [[ ! -d "$file" ]]; then
+			echo "File or directory $file doesn't exist."
+			exit
+		fi
+	done
+
+	tar -czf - "${files[@]}" | base64 | xclip
+
+	echo "File(s) are copied to clipboard."
+
+	# restore IFS
+	IFS="${OLD_IFS}"
+}
+
+ctc "$@"
+

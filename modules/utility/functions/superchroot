@@ -1,0 +1,51 @@
+#
+# mount necessary directories before chroot and unmount them after chroot
+#
+
+superchroot(){
+	# save IFS and replace it with new one
+	OLD_IFS="${IFS}"
+	DEFAULT_IFS=$'\n\t'
+	IFS="${DEFAULT_IFS}"
+
+	CHROOT="$1"; shift
+
+	if [[ "$EUID" -ne 0 ]]
+	then
+		echo "Please run as root"
+		return
+	fi
+
+	if [[ -z "$CHROOT" ]]
+	then
+		echo "You have to specify chroot directory."
+		return
+	fi
+
+	if [[ ! -d "$CHROOT" ]]
+	then
+		echo "Directory $CHROOT doesn't exist."
+		return
+	fi
+
+	mount --bind /proc "${CHROOT}"/proc
+	mount --bind /sys "${CHROOT}"/sys
+	mount --bind /dev "${CHROOT}"/dev
+	mount --bind /dev/pts "${CHROOT}"/dev/pts
+
+	echo "Prechroot commands are successfully executed."
+
+	chroot "$CHROOT" "$@"
+
+	umount "${CHROOT}"/dev/pts
+	umount "${CHROOT}"/dev
+	umount "${CHROOT}"/sys
+	umount "${CHROOT}"/proc
+
+	echo "Postchroot commands are successfully executed."
+
+	# restore IFS
+	IFS="${OLD_IFS}"
+}
+
+superchroot "$@"

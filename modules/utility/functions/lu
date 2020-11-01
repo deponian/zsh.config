@@ -1,0 +1,25 @@
+#
+# ls -l with real size for directories
+# usage: lu path_to_dir_or_file
+# path_to_dir_or_file must be the only argument, ls' flags are not supported
+# if path_to_dir_or_file is not passed then current directory is used
+#
+
+lu(){
+	local filepath # most likely path to directory
+	local filename dirname start end size
+
+	filepath="${1:-.}"
+	for file in "${filepath}"/*; do
+		filename=$(basename "${file}")
+		dirname=$(dirname "${file}")
+
+		start="$(ls -ldh "${file}" | cut -d' ' -f1,2,3,4)"
+		end="$(cd "${dirname}" && ls -ldh --color=always "${filename}" | cut -d' ' -f6-)"
+		size="$(du -msh "${file}" | cut -f1)"
+
+		echo "${start} ${size} ${end}"
+	done | column -t -o' ' -R 2,5
+}
+
+lu "$@"

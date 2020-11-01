@@ -1,0 +1,13 @@
+# Lists human readable sizes, recursively, sort by modification time.
+
+lr(){
+	if (( $+commands[fd] )); then
+		fd --hidden --no-ignore -tf -x stat -c "%y %n" {} | sort
+	else
+		find . -type f -exec stat -c "%y %n" '{}' \; | sort
+	fi
+	echo "-----------------------------------"
+	echo $(date "+%F %T.%N %z") current time
+}
+
+lr "$@"

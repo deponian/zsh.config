@@ -1,0 +1,67 @@
+#
+# sss --- super ss --- makes ss' output more beautiful
+#
+
+print_formated () {
+	local line net_info proc procs fmt_procs pid
+
+	line="${1}"
+	net_info="$(echo "${line}" | cut -d" " -f1,2,3,4)"
+
+	# first process
+	procs="$(echo "${line}" | cut -d" " -f5)"
+	proc="$(echo "${procs}" | awk -F '\\),\\(' '{print $1}' | sed -E -e 's|.*"(.*)".*|\1|')"
+	pid="$(echo "${procs}" | awk -F '\\),\\(' '{print $1}' | sed -E -e 's|.*pid=([0-9]+).*|\1|')"
+	procs="$(echo "${procs}" | awk -F '\\),\\(' '{print $2}')"
+	fmt_procs="${proc}[${pid}]"
+
+	# remaining processes
+	while [[ -n "${procs}" ]]; do
+		proc="$(echo "${procs}" | awk -F '\\),\\(' '{print $1}' | sed -E -e 's|.*"(.*)".*|\1|')"
+		pid="$(echo "${procs}" | awk -F '\\),\\(' '{print $1}' | sed -E -e 's|.*pid=([0-9]+).*|\1|')"
+		procs="$(echo "${procs}" | awk -F '\\),\\(' '{print $2}')"
+		fmt_procs="${fmt_procs},${proc}[${pid}]"
+	done
+
+	echo "${net_info} ${fmt_procs}"
+}
+
+sss() {
+	local options
+
+	# save IFS and replace it with new one
+	OLD_IFS="${IFS}"
+	DEFAULT_IFS=$'\n\t'
+	IFS="${DEFAULT_IFS}"
+
+	IFS=' '; options="$*"; IFS="${DEFAULT_IFS}"
+	if [[ -n "${options}" ]]; then
+		[[ "${options}" =~ [tu46] ]] || { echo "-t, -u, -4 or -6 required"; exit 1; }
+		[[ ! "${options}" =~ [^-tu46nralp] ]] || { echo "only -n, -r, -a, -l or -p may be used"; exit 1; }
+	else
+		options="-na4" # default
+	fi
+
+	{
+		echo "Prot State LocalAddress:Port PeerAddress:Port Process(es)"
+		for line in $(ss --no-header --processes "${options}" |
+						tr -s " " |
+						cut -d" " -f1,2,5,6,7 |
+						LC_ALL=C sort -k1r,1 -k2,2 -k3,3 -k4,4)
+		do
+			if [[ "${options}" =~ t && ! "${options}" =~ u ]]; then
+				print_formated "tcp ${line}"
+			elif [[ "${options}" =~ u && ! "${options}" =~ t ]]; then
+				print_formated "udp ${line}"
+			else
+				print_formated "${line}"
+			fi
+		done
+		echo "Prot State LocalAddress:Port PeerAddress:Port Process(es)"
+	} | column -t -R 3,4 -E 3,4,5
+	
+	# restore IFS
+	IFS="${OLD_IFS}"
+}
+
+sss "$@"
