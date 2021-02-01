@@ -41,7 +41,9 @@ zstyle ':prezto:load' pmodule \
   'autosuggestions' \
   'prompt' \
   'fzf' \
-  'python'
+  'python' \
+  'ruby' \
+  'rails'
 
 #
 # Autosuggestions
