@@ -27,6 +27,8 @@ alias fd='fd --hidden --no-ignore'
 alias rsync='rsync --progress'
 alias rc="sed 's/\x1b\[[0-9;]*m//g'" # [r]emove [c]olor
 alias w='watch -c -n 1 '
+alias clear='clear -x'
+
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
 fi
