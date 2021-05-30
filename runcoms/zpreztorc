@@ -85,8 +85,11 @@ zstyle ':prezto:module:git:alias' skip 'no'
 # Git log -- medium format
 zstyle ':prezto:module:git:log:medium' format '%C(#5398dd)commit %H%C(#f2684b)%d%n%C(#c2c2c2)Author: %C(#00d7af)%an <%ae>%n%C(#c2c2c2)Date:   %C(#ca93db)%ad (%ar)%C(reset)%n%n    %s%n'
 
-# Git log -- online format
+# Git log -- oneline format
 zstyle ':prezto:module:git:log:oneline' format '%C(#5398dd)%h %C(#00d7af)%cd%C(reset) %C(#969696)::%C(reset)%C(#f2684b)%d %C(#d9d9d9)%s'
+
+# Git log -- oneline format with author name
+zstyle ':prezto:module:git:log:oneline_with_author' format '%C(#5398dd)%h %C(#00d7af)%cd%C(reset) %C(#ffd154)%an%C(reset) %C(#969696)::%C(reset)%C(#f2684b)%d %C(#d9d9d9)%s'
 
 # Git log -- brief format
 zstyle ':prezto:module:git:log:brief' format '%C(#5398dd)%h%C(reset) %s%n%C(#00d7af)(%ar by %an)%C(#f2684b)%d%C(reset)%n'

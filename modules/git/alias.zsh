@@ -15,6 +15,8 @@ zstyle -s ':prezto:module:git:log:medium' format '_git_log_medium_format' \
   || _git_log_medium_format='%C(bold)Commit:%C(reset) %C(green)%H%C(red)%d%n%C(bold)Author:%C(reset) %C(cyan)%an <%ae>%n%C(bold)Date:%C(reset)   %C(blue)%ai (%ar)%C(reset)%n%+B'
 zstyle -s ':prezto:module:git:log:oneline' format '_git_log_oneline_format' \
   || _git_log_oneline_format='%C(green)%h%C(reset) %s%C(red)%d%C(reset)%n'
+zstyle -s ':prezto:module:git:log:oneline_with_author' format '_git_log_oneline_with_author_format' \
+  || _git_log_oneline_format='%C(green)%h%C(reset) %s%C(red)%d%C(reset)%n'
 zstyle -s ':prezto:module:git:log:brief' format '_git_log_brief_format' \
   || _git_log_brief_format='%C(green)%h%C(reset) %s%n%C(blue)(%ar by %an)%C(red)%d%C(reset)%n'
 
@@ -121,16 +123,19 @@ if ! zstyle -t ':prezto:module:git:alias' skip 'yes'; then
   alias giX='git rm -rf --cached'
 
   # Log (l)
+  # I use these often
   alias gl='git log --topo-order --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
+  alias glo='git log --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
+  alias gloa='git log --graph --pretty=format:"${_git_log_oneline_with_author_format}" --date=format:"%F %R"'
+  alias gla='git log --all --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
+  alias glaa='git log --all --graph --pretty=format:"${_git_log_oneline_with_author_format}" --date=format:"%F %R"'
+  alias glp='git log --topo-order --patch --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
+  alias glc='git shortlog --summary --numbered'
+  # I don't use these
+  alias glS='git log --show-signature'
   alias gls='git log --topo-order --stat --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
   alias glf='git log --topo-order --stat --patch --full-diff --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
-  alias glp='git log --topo-order --patch --pretty=format:"${_git_log_medium_format}" --date=format:"%A %d %B %Y %H:%M:%S"'
-  alias glo='git log --topo-order --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
-  alias glg='git log --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
-  alias gla='git log --all --graph --pretty=format:"${_git_log_oneline_format}" --date=format:"%F %R"'
   alias glb='git log --topo-order --pretty=format:"${_git_log_brief_format}"'
-  alias glc='git shortlog --summary --numbered'
-  alias glS='git log --show-signature'
 
   # Merge (m)
   alias gm='git merge'
