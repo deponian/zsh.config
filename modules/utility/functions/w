@@ -1,0 +1,53 @@
+# watch without "watch" command
+#
+# usage: w [period] command
+# examples:
+#	run 'ls' every 1 second:
+#		w ls
+#	run 'ls' every 3 second:
+#		w 3 ls
+#	run previous command every 1 second:
+#		w
+#	run previous command every 3 second:
+#		w 3
+#	run 'lsof | grep file' every 3 second:
+#		w 3 'lsof | grep file'
+
+w(){
+	# make cursor visible and hide '^C' and '%'
+	trap "{ echo ''; tput cnorm; tput dl1; tput cuu1; return }" INT
+
+	# default period is one second
+	period=1
+	if [[ "${1}" =~ ^[0-9]+$ ]]; then
+		period="${1}"
+		shift
+	fi
+
+	# run previous command if no arguments (except period) specified
+	command=""
+	if [[ "$#" -eq 0 ]]; then
+		command="$(fc -ln -1)"
+	else
+		command="$*"
+	fi
+
+	tput clear
+
+	# make cursor invisible
+	tput civis
+	while true
+	do
+		# color command if bat is installed
+		if command -v bat &> /dev/null; then
+			echo "\e[36m::\e[39m Every \e[92m${period}\e[39ms \e[36m::\e[39m $(echo "${command}" | bat --language zsh --color always --theme="Dracula" --plain) \e[36m::\e[39m"
+		else
+			echo "\e[36m::\e[39m Every \e[92m${period}\e[39ms \e[36m::\e[39m ${command} \e[36m::\e[39m"
+		fi
+		eval "${command}"
+		sleep "${period}"
+		tput home
+	done
+}
+
+w "$@"
