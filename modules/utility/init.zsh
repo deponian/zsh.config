@@ -27,6 +27,7 @@ alias fd='fd --hidden --no-ignore'
 alias rsync='rsync --progress'
 alias rc="sed 's/\x1b\[[0-9;]*m//g'" # [r]emove [c]olor
 alias clear='clear -x'
+alias cat='bat --paging=never --theme="OneHalfDark" --plain'
 
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
