@@ -21,7 +21,7 @@ alias sudo='sudo '
 alias ip='ip -color=auto'
 alias sed='sed -E'
 alias rg='rg --smart-case --hidden --no-ignore --no-config --heading --follow \
-	--context-separator "8<-------8<-------8<-------8<-------8<"'
+	--context-separator="-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"'
 alias bat='bat --paging=never --theme="OneHalfDark" --style=header'
 alias fd='fd --hidden --no-ignore'
 alias rsync='rsync --progress'
