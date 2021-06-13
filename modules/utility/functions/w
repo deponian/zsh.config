@@ -6,10 +6,6 @@
 #		w ls
 #	run 'ls' every 3 second:
 #		w 3 ls
-#	run previous command every 1 second:
-#		w
-#	run previous command every 3 second:
-#		w 3
 #	run 'lsof | grep file' every 3 second:
 #		w 3 'lsof | grep file'
 
@@ -24,15 +20,14 @@ w(){
 		shift
 	fi
 
-	# run previous command if no arguments (except period) specified
-	command=""
 	if [[ "$#" -eq 0 ]]; then
-		command="$(fc -ln -1)"
-	else
-		command="$*"
+		echo "You have to specify a command to repeat."
+		return
 	fi
 
 	tput clear
+
+	command="$*"
 
 	# make cursor invisible
 	tput civis
@@ -44,9 +39,15 @@ w(){
 		else
 			echo "\e[36m::\e[39m Every \e[92m${period}\e[39ms \e[36m::\e[39m ${command} \e[36m::\e[39m"
 		fi
-		eval "${command}"
+
+		eval "${command}" | while IFS= read -r line; do 
+			echo "${line}"
+			tput el # clear to end of line
+		done
+
 		sleep "${period}"
-		tput home
+
+		tput home # move cursor to top left corner of terminal
 	done
 }
 
