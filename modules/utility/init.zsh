@@ -28,9 +28,9 @@ alias rsync='rsync --progress'
 alias rc="sed 's/\x1b\[[0-9;]*m//g'" # [r]emove [c]olor
 alias clear='clear -x'
 alias cat='bat --paging=never --theme="OneHalfDark" --plain'
-alias red='rg --passthru --colors "match:fg:red"'
-alias green='rg --passthru --colors "match:fg:green"'
-alias blue='rg --passthru --colors "match:fg:blue"'
+alias red='rg --passthru --color=always --colors "match:fg:red"'
+alias green='rg --passthru --color=always --colors "match:fg:green"'
+alias blue='rg --passthru --color=always --colors "match:fg:blue"'
 
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
