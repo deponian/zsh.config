@@ -85,7 +85,6 @@ if ! zstyle -t ':prezto:module:git:alias' skip 'yes'; then
   alias gCT='gCt $(gCl)'
 
   # Data (d)
-  alias gd='git ls-files'
   alias gdc='git ls-files --cached'
   alias gdx='git ls-files --deleted'
   alias gdm='git ls-files --modified'
@@ -173,7 +172,6 @@ if ! zstyle -t ':prezto:module:git:alias' skip 'yes'; then
   alias gRb='git-hub-browse'
 
   # Stash (s)
-  alias gs='git stash'
   alias gsa='git stash apply'
   alias gsx='git stash drop'
   alias gsX='git-stash-clear-interactive'
@@ -205,8 +203,10 @@ if ! zstyle -t ':prezto:module:git:alias' skip 'yes'; then
   alias gtv='git verify-tag'
 
   # Working Copy (w)
+  alias gs='git status'
   alias gws='git status --ignore-submodules=${_git_status_ignore_submodules}'
   alias gwS='git status --ignore-submodules=${_git_status_ignore_submodules} --short'
+  alias gd='git diff'
   alias gwd='git diff --no-ext-diff'
   alias gwD='git diff --no-ext-diff --word-diff'
   alias gwr='git reset --soft'
