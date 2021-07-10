@@ -2,19 +2,19 @@
 #
 # usage: w [period] command
 # examples:
-#	run 'ls' every 1 second:
-#		w ls
 #	run 'ls' every 3 second:
-#		w 3 ls
-#	run 'lsof | grep file' every 3 second:
-#		w 3 'lsof | grep file'
+#		w ls
+#	run 'ls' every 5 second:
+#		w 5 ls
+#	run 'lsof | grep file' every 5 second:
+#		w 5 'lsof | grep file'
 
 w(){
 	# make cursor visible and hide '^C' and '%'
 	trap "{ echo ''; tput cnorm; tput dl1; tput cuu1; return }" INT
 
-	# default period is one second
-	period=1
+	# default period is three seconds
+	period=3
 	if [[ "${1}" =~ ^[0-9]+$ ]]; then
 		period="${1}"
 		shift
@@ -33,6 +33,9 @@ w(){
 	tput civis
 	while true
 	do
+		# move cursor to top left corner of terminal
+		tput home
+
 		# color command if bat is installed
 		if command -v bat &> /dev/null; then
 			echo "\e[36m::\e[39m Every \e[92m${period}\e[39ms \e[36m::\e[39m $(echo "${command}" | bat --language zsh --color always --theme="Dracula" --plain) \e[36m::\e[39m"
@@ -41,13 +44,13 @@ w(){
 		fi
 
 		eval "${command}" | while IFS= read -r line; do 
-			echo "${line}"
 			tput el # clear to end of line
+			echo "${line}"
 		done
 
-		sleep "${period}"
+		tput ed # clear to end of screen
 
-		tput home # move cursor to top left corner of terminal
+		sleep "${period}"
 	done
 }
 
