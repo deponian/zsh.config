@@ -31,6 +31,7 @@ alias cat='bat --paging=never --theme="OneHalfDark" --plain'
 alias red='rg --passthru --color=always --colors "match:fg:red"'
 alias green='rg --passthru --color=always --colors "match:fg:green"'
 alias blue='rg --passthru --color=always --colors "match:fg:blue"'
+alias vimdiff='nvim -d'
 
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
