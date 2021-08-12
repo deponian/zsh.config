@@ -17,10 +17,10 @@ fi
 # Editors and pagers
 #
 
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
 export PAGER='less'
-export MANPAGER="vim -c MANPAGER -"
+export MANPAGER="nvim -c MANPAGER -"
 
 #
 # Fix for vim as manpager on Fedora (see https://github.com/vim/vim/issues/2823)
