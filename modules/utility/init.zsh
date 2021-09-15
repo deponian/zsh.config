@@ -19,7 +19,6 @@ pmodload 'helper' 'spectrum'
 alias type='type -a'
 alias sudo='sudo '
 alias ip='ip -color=auto'
-alias sed='sed -E'
 alias rg='rg --smart-case --hidden --no-ignore --no-config --heading --follow \
 	--context-separator="-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"'
 alias bat='bat --paging=never --theme="OneHalfDark" --style=header'
