@@ -3,9 +3,9 @@
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-zmodload zsh/system
-
 _zsh_autosuggest_async_request() {
+	zmodload zsh/system 2>/dev/null # For `$sysparams`
+
 	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD _ZSH_AUTOSUGGEST_CHILD_PID
 
 	# If we've got a pending request, cancel it
@@ -14,17 +14,20 @@ _zsh_autosuggest_async_request() {
 		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
 		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
 
-		# Zsh will make a new process group for the child process only if job
-		# control is enabled (MONITOR option)
-		if [[ -o MONITOR ]]; then
-			# Send the signal to the process group to kill any processes that may
-			# have been forked by the suggestion strategy
-			kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-		else
-			# Kill just the child process since it wasn't placed in a new process
-			# group. If the suggestion strategy forked any child processes they may
-			# be orphaned and left behind.
-			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		# We won't know the pid unless the user has zsh/system module installed
+		if [[ -n "$_ZSH_AUTOSUGGEST_CHILD_PID" ]]; then
+			# Zsh will make a new process group for the child process only if job
+			# control is enabled (MONITOR option)
+			if [[ -o MONITOR ]]; then
+				# Send the signal to the process group to kill any processes that may
+				# have been forked by the suggestion strategy
+				kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+			else
+				# Kill just the child process since it wasn't placed in a new process
+				# group. If the suggestion strategy forked any child processes they may
+				# be orphaned and left behind.
+				kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+			fi
 		fi
 	fi
 
@@ -41,7 +44,8 @@ _zsh_autosuggest_async_request() {
 
 	# There's a weird bug here where ^C stops working unless we force a fork
 	# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
-	command true
+	autoload -Uz is-at-least
+	is-at-least 5.8 || command true
 
 	# Read the pid from the child process
 	read _ZSH_AUTOSUGGEST_CHILD_PID <&$_ZSH_AUTOSUGGEST_ASYNC_FD
@@ -56,9 +60,12 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	emulate -L zsh
 
+	local suggestion
+
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
-		zle autosuggest-suggest -- "$(cat <&$1)"
+		IFS='' read -rd '' -u $1 suggestion
+		zle autosuggest-suggest -- "$suggestion"
 
 		# Close the fd
 		exec {1}<&-

@@ -1,6 +1,7 @@
 require 'pry'
 require 'rspec/wait'
 require 'terminal_session'
+require 'tempfile'
 
 RSpec.shared_context 'terminal session' do
   let(:term_opts) { {} }
@@ -11,8 +12,7 @@ RSpec.shared_context 'terminal session' do
 
   around do |example|
     before_sourcing.call
-    session.run_command(options.join('; '))
-    session.run_command('source zsh-autosuggestions.zsh')
+    session.run_command(['source zsh-autosuggestions.zsh', *options].join('; '))
     after_sourcing.call
     session.clear_screen
 
@@ -22,18 +22,20 @@ RSpec.shared_context 'terminal session' do
   end
 
   def with_history(*commands, &block)
-    session.run_command('fc -p')
+    Tempfile.create do |f|
+      f.write(commands.map{|c| c.gsub("\n", "\\\n")}.join("\n"))
+      f.flush
 
-    commands.each do |c|
-      c.respond_to?(:call) ? c.call : session.run_command(c)
+      session.run_command('fc -p')
+      session.run_command("fc -R #{f.path}")
+
+      session.clear_screen
+
+      yield block
+
+      session.send_keys('C-c')
+      session.run_command('fc -P')
     end
-
-    session.clear_screen
-
-    yield block
-
-    session.send_keys('C-c')
-    session.run_command('fc -P')
   end
 end
 

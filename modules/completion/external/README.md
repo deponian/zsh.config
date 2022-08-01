@@ -35,18 +35,23 @@ Add `antigen bundle zsh-users/zsh-completions` to your `~/.zshrc`.
 
 * Clone the repository inside your oh-my-zsh repo:
 
-        git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-completions
+        git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
 
-* Enable it in your `.zshrc` by adding it to your plugin list and reloading the completion:
+* Add it to `FPATH` in your `.zshrc` by adding the following line before `source "$ZSH/oh-my-zsh.sh"`:
 
-        plugins=(… zsh-completions)
-        autoload -U compinit && compinit
+        fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
+Note: adding it as a regular Oh My ZSH! plugin will not work properly (see [#603](https://github.com/zsh-users/zsh-completions/issues/603)).
+
+#### [zinit](https://github.com/zdharma-continuum/zinit)
+
+Add `zinit light zsh-users/zsh-completions` to your `~/.zshrc`.
 
 ### Manual installation
 
 * Clone the repository:
 
-        git clone git://github.com/zsh-users/zsh-completions.git
+        git clone https://github.com/zsh-users/zsh-completions.git
 
 * Include the directory in your `$fpath`, for example by adding in `~/.zshrc`:
 
