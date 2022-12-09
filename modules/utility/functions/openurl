@@ -1,0 +1,23 @@
+# open file from Internet in vim
+#
+# usage: openurl https://...
+
+openurl(){
+	local url
+
+	url="${1}"
+	filename=$(basename -- "${url}")
+	extension="${filename##*.}"
+
+	curl -s "${url}" -O --output-dir /tmp
+
+	if command -v nvim &> /dev/null; then
+		nvim "/tmp/${filename}"
+	else
+		vim "/tmp/${filename}"
+	fi
+
+	rm "/tmp/${filename}"
+}
+
+openurl "$@"
