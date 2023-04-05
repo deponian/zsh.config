@@ -258,25 +258,23 @@ zstyle ':prezto:module:utility' safe-ops 'no'
 # FZF
 #
 
-# Use keybindings
-zstyle ':prezto:module:fzf' key-bindings 'yes'
+# Set the default command to use when input is tty - default is to set it to these in the order in which they're found:
+zstyle ':prezto:module:fzf' fzf-default-command 'fd --type file --follow --hidden --exclude .git'
 
-# Use completion
-zstyle ':prezto:module:fzf' completion 'yes'
-
-# Set height of the fzf results (comment for full screen)
+# Set height of the fzf results - default: full height
 zstyle ':prezto:module:fzf' height '70%'
 
-# Set width and position of the fzf preview window (comment for default which is right:50%)
-# (right|left|top|down):NUMBER[%]
-zstyle ':prezto:module:fzf' width 'right:70%'
+# Set width of the fzf results - default: right:50%
+zstyle ':prezto:module:fzf' width 'right:60%'
 
-# Open fzf results in a tmux pane (if using tmux)
-zstyle ':prezto:module:fzf' tmux 'yes'
+# Show file preview with ctrl+t and directory contents preview (needs tree) with alt-c
+zstyle ':prezto:module:fzf' preview 'yes'
 
-# Set colorscheme
-# A list of available colorschemes is available in color.zsh
-# To add more color schemes of your own, consult
-# https://github.com/junegunn/fzf/wiki/Color-schemes and add values to the
-# color.zsh file accordingly
-zstyle ':prezto:module:fzf' colorscheme 'One Dark'
+# Open fzf results in a tmux pane, if using tmux - default: no
+ zstyle ':prezto:module:fzf' tmux 'no'
+
+# Order output in reverse order - default: no
+zstyle ':prezto:module:fzf' reverse 'no'
+
+# Set the color scheme
+zstyle ':prezto:module:fzf' color-scheme 'One Dark'
