@@ -38,6 +38,10 @@ if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
 fi
 
+if command -v curlie &> /dev/null; then
+	alias curl=curlie
+fi
+
 # ls
 if is-callable 'dircolors'; then
   # GNU Core Utilities
