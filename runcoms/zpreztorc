@@ -200,7 +200,6 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
   'brackets' \
   'pattern' \
   'line' \
-  'root' \
   'regexp'
 
 # Set syntax highlighting styles.
