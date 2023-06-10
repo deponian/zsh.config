@@ -14,6 +14,7 @@ fzf_colors["JellyX"]="fg:-1,bg:-1,hl:230,fg+:3,bg+:233,hl+:229,info:150,prompt:1
 fzf_colors["Molokai"]="fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81,info:144,prompt:161,spinner:135,pointer:135,marker:118"
 fzf_colors["Nord"]="fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C,pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B"
 fzf_colors["One Dark"]="dark,fg:-1,bg:-1,hl:#98c379,fg+:#fefefe,bg+:#3e4452,hl+:#98c379,info:#61afef,prompt:#61afef,pointer:#e5c07b,marker:#e5c07b,spinner:#61afef"
+fzf_colors["One Dark Deep"]="dark,fg:#93a4c3,bg:-1,hl:#efbd5d,fg+:#fefefe,bg+:#3e4452,hl+:#f65866,info:#41a7fc,prompt:#41a7fc,pointer:#8bcd5b,marker:#34bfd0,spinner:#41a7fc,gutter:-1,border:#303952,separator:-1,scrollbar:#50608c"
 fzf_colors["Paper Color"]="fg:#4d4d4c,bg:#eeeeee,hl:#d7005f,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae"
 fzf_colors["Red"]="fg:124,bg:16,hl:202,fg+:214,bg+:52,hl+:231,info:52,prompt:196,spinner:208,pointer:196,marker:208"
 fzf_colors["Seoul256 Dusk"]="fg:242,bg:236,hl:65,fg+:15,bg+:239,hl+:108,info:108,prompt:109,spinner:108,pointer:168,marker:168"

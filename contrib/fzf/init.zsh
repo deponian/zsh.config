@@ -18,7 +18,8 @@ fi
 
 source "${0:h}/fzf.plugin.zsh"
 
-export FZF_DEFAULT_OPTS=""
+# Set default fzf opts
+zstyle -s ':prezto:module:fzf' fzf-default-opts FZF_DEFAULT_OPTS
 
 # Set order
 if zstyle -t ':prezto:module:fzf' reverse 'yes'; then
@@ -59,5 +60,3 @@ zstyle -s ':prezto:module:fzf' color-scheme FZF_COLOR
 if [[ ! -z "$FZF_COLOR" && ${fzf_colors["$FZF_COLOR"]} ]]; then
   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --color ${fzf_colors["$FZF_COLOR"]}"
 fi
-
-

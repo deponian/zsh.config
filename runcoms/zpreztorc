@@ -259,12 +259,20 @@ zstyle ':prezto:module:utility' safe-ops 'no'
 #
 
 # Set the default command to use when input is tty - default is to set it to these in the order in which they're found:
-zstyle ':prezto:module:fzf' fzf-default-command 'fd --type file --follow --hidden --exclude .git'
+zstyle ':prezto:module:fzf' fzf-default-command 'fd --type file --follow --hidden --no-ignore --exclude .git'
 
-# Set height of the fzf results - default: full height
+# Set default options - default: empty
+zstyle ':prezto:module:fzf' fzf-default-opts \
+  '--info=inline:":: "' \
+  '--no-separator' \
+  '--prompt="■ "' \
+  '--pointer="●"' \
+  '--marker="›"'
+
+# Set height of the fzf results - default: 50%
 zstyle ':prezto:module:fzf' height '70%'
 
-# Set width of the fzf results - default: right:50%
+# Set width of fzf preview window - default: right:50%
 zstyle ':prezto:module:fzf' width 'right:60%'
 
 # Show file preview with ctrl+t and directory contents preview (needs tree) with alt-c
@@ -277,4 +285,4 @@ zstyle ':prezto:module:fzf' preview 'yes'
 zstyle ':prezto:module:fzf' reverse 'no'
 
 # Set the color scheme
-zstyle ':prezto:module:fzf' color-scheme 'One Dark'
+zstyle ':prezto:module:fzf' color-scheme 'One Dark Deep'
