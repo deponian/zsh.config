@@ -33,6 +33,7 @@ alias blue='rg --passthru --color=always --colors "match:fg:blue"'
 alias vimdiff='nvim -d'
 alias cmdforeach='xargs -i zsh -c'
 alias .='nvim'
+alias open='xdg-open'
 
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
