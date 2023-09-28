@@ -29,6 +29,11 @@ w(){
 
 	command="$*"
 
+	rm /tmp/w-old
+	rm /tmp/w-new
+	touch /tmp/w-old
+	touch /tmp/w-new
+
 	# make cursor invisible
 	tput civis
 	while true
@@ -43,14 +48,27 @@ w(){
 			echo "\e[36m::\e[39m Every \e[92m${period}\e[39ms \e[36m::\e[39m ${command} \e[36m::\e[39m"
 		fi
 
-		eval "${command}" | while IFS= read -r line; do 
+		eval "${command}" | while IFS= read -r new_line; do
 			tput el # clear to end of line
-			echo "${line}"
+			echo "${new_line}" >> /tmp/w-new
+
+			old_line="$(head -1 /tmp/w-old)"
+			sed -i '1d' /tmp/w-old
+
+			# color line if it's changed
+			if diff <(echo "${old_line}") <(echo "${new_line}") > /dev/null; then
+				echo "${new_line}"
+			else
+				echo "\e[92m${new_line}\e[39m"
+			fi
 		done
 
 		tput ed # clear to end of screen
 
 		sleep "${period}"
+
+		mv /tmp/w-new /tmp/w-old
+		touch /tmp/w-new
 	done
 }
 
