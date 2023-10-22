@@ -1,64 +1,87 @@
 #
-# Sets general shell options and defines environment variables.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
+# Generic options and environment settings
 #
 
 #
-# Smart URLs
+# Changing directories
 #
 
-# This logic comes from an old version of zim. Essentially, bracketed-paste was
-# added as a requirement of url-quote-magic in 5.1, but in 5.1.1 bracketed
-# paste had a regression. Additionally, 5.2 added bracketed-paste-url-magic
-# which is generally better than url-quote-magic so we load that when possible.
-autoload -Uz is-at-least
-if [[ ${ZSH_VERSION} != 5.1.1 && ${TERM} != "dumb" ]]; then
-  if is-at-least 5.2; then
-    autoload -Uz bracketed-paste-url-magic
-    zle -N bracketed-paste bracketed-paste-url-magic
-  else
-    if is-at-least 5.1; then
-      autoload -Uz bracketed-paste-magic
-      zle -N bracketed-paste bracketed-paste-magic
-    fi
-  fi
-  autoload -Uz url-quote-magic
-  zle -N self-insert url-quote-magic
+# Perform cd to a directory if the typed command is invalid, but is a directory.
+setopt AUTO_CD
+
+# Make cd push the old directory to the directory stack.
+setopt AUTO_PUSHD
+
+autoload -Uz is-at-least && if is-at-least 5.8; then
+  # Don't print the working directory after a cd.
+  setopt CD_SILENT
 fi
 
-#
-# General
-#
+# Don't push multiple copies of the same directory to the stack.
+setopt PUSHD_IGNORE_DUPS
 
-setopt COMBINING_CHARS      # Combine zero-length punctuation characters (accents)
-                            # with the base character.
-setopt INTERACTIVE_COMMENTS # Enable comments in interactive shell.
-setopt RC_QUOTES            # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
-unsetopt MAIL_WARNING       # Don't print a warning message if a mail file has been accessed.
+# Don't print the directory stack after pushd or popd.
+setopt PUSHD_SILENT
 
-#
-# Jobs
-#
-
-setopt LONG_LIST_JOBS     # List jobs in the long format by default.
-setopt AUTO_RESUME        # Attempt to resume existing job before creating a new process.
-setopt NOTIFY             # Report status of background jobs immediately.
-unsetopt BG_NICE          # Don't run all background jobs at a lower priority.
-unsetopt HUP              # Don't kill jobs on shell exit.
-unsetopt CHECK_JOBS       # Don't report on jobs when shell exit.
+# Have pushd without arguments act like `pushd ${HOME}`.
+setopt PUSHD_TO_HOME
 
 #
-# Termcap
+# Expansion and globbing
 #
 
-if zstyle -t ':prezto:environment:termcap' color; then
-  export LESS_TERMCAP_mb=$'\E[01;31m'      # Begins blinking.
-  export LESS_TERMCAP_md=$'\E[01;31m'      # Begins bold.
-  export LESS_TERMCAP_me=$'\E[0m'          # Ends mode.
-  export LESS_TERMCAP_se=$'\E[0m'          # Ends standout-mode.
-  export LESS_TERMCAP_so=$'\E[00;47;30m'   # Begins standout-mode.
-  export LESS_TERMCAP_ue=$'\E[0m'          # Ends underline.
-  export LESS_TERMCAP_us=$'\E[01;32m'      # Begins underline.
-fi
+# Treat `#`, `~`, and `^` as patterns for filename globbing.
+setopt EXTENDED_GLOB
+
+#
+# History
+#
+
+# The file to save the history in.
+if (( ! ${+HISTFILE} )) typeset -g HISTFILE=${ZDOTDIR:-${HOME}}/.zhistory
+
+# The maximum number of events stored internally and saved in the history file.
+# The former is greater than the latter in case user wants HIST_EXPIRE_DUPS_FIRST.
+HISTSIZE=20000
+SAVEHIST=10000
+
+# Don't display duplicates when searching the history.
+setopt HIST_FIND_NO_DUPS
+
+# Don't enter immediate duplicates into the history.
+setopt HIST_IGNORE_DUPS
+
+# Remove commands from the history that begin with a space.
+setopt HIST_IGNORE_SPACE
+
+# Don't execute the command directly upon history expansion.
+setopt HIST_VERIFY
+
+# Cause all terminals to share the same history 'session'.
+setopt SHARE_HISTORY
+
+#
+# Input/output
+#
+
+# Allow comments starting with `#` in the interactive shell.
+setopt INTERACTIVE_COMMENTS
+
+# Disallow `>` to overwrite existing files. Use `>|` or `>!` instead.
+setopt NO_CLOBBER
+
+#
+# Job control
+#
+
+# List jobs in verbose format by default.
+setopt LONG_LIST_JOBS
+
+# Prevent background jobs being given a lower priority.
+setopt NO_BG_NICE
+
+# Prevent status report of jobs on shell exit.
+setopt NO_CHECK_JOBS
+
+# Prevent SIGHUP to jobs on shell exit.
+setopt NO_HUP

@@ -1,56 +1,52 @@
-Environment
+environment
 ===========
 
-Sets general shell options and defines environment variables.
+Sets sane Zsh built-in environment options.
 
-This module must be loaded first.
+Settings
+--------
 
-Contributors
-------------
+If `HISTFILE` is not set, the history is set to be saved in `${ZDOTDIR:-${HOME}}/.zhistory`.
+The file path can be customized with:
 
-This module **MUST NOT** rely on any command not built in Zsh.
+    HISTFILE=/path/to/.zsh_history
 
-Non-interactive environment variables should be defined in [`zshenv`][1].
+Some Zsh installations already have a value set for `HISTFILE`. E.g. the `/etc/zshrc`
+file in macOS sets it to `${ZDOTDIR:-$HOME}/.zsh_history`, so you'll have to set
+your own value in your `~/.zshrc` if you want to customize it.
 
-Options
--------
+Zsh options
+-----------
 
-### General
+### Changing directories
 
-  - `COMBINING_CHARS` combine zero-length punctuation characters (accents) with
-    the base character.
-  - `INTERACTIVE_COMMENTS` enable comments in interactive shell.
-  - `RC_QUOTES` allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
-  - `MAIL_WARNING` don't print a warning message if a mail file has been accessed.
+  * `AUTO_CD` performs cd to a directory if the typed command is invalid, but is a directory.
+  * `AUTO_PUSHD` makes cd push the old directory to the directory stack.
+  * `CD_SILENT` does not print the working directory after a cd.
+  * `PUSHD_IGNORE_DUPS` does not push multiple copies of the same directory to the stack.
+  * `PUSHD_SILENT` does not print the directory stack after pushd or popd.
+  * `PUSHD_TO_HOME` has pushd without arguments act like `pushd ${HOME}`.
 
-### Jobs
+### Expansion and globbing
 
-  - `LONG_LIST_JOBS` list jobs in the long format by default.
-  - `AUTO_RESUME` attempt to resume existing job before creating a new process.
-  - `NOTIFY` report status of background jobs immediately.
-  - `BG_NICE` don't run all background jobs at a lower priority.
-  - `HUP` don't kill jobs on shell exit.
-  - `CHECK_JOBS` don't report on jobs when shell exit.
+  * `EXTENDED_GLOB` treats `#`, `~`, and `^` as patterns for filename globbing.
 
-Variables
----------
+### History
 
-### Termcap
+  * `HIST_FIND_NO_DUPS` does not display duplicates when searching the history.
+  * `HIST_IGNORE_DUPS` does not enter immediate duplicates into the history.
+  * `HIST_IGNORE_SPACE` removes commands from the history that begin with a space.
+  * `HIST_VERIFY` doesn't execute the command directly upon history expansion.
+  * `SHARE_HISTORY` causes all terminals to share the same history 'session'.
 
-  - `LESS_TERMCAP_mb` begins blinking.
-  - `LESS_TERMCAP_md` begins bold.
-  - `LESS_TERMCAP_me` ends mode.
-  - `LESS_TERMCAP_se` ends standout-mode.
-  - `LESS_TERMCAP_so` begins standout-mode.
-  - `LESS_TERMCAP_ue` ends underline.
-  - `LESS_TERMCAP_us` begins underline.
+### Input/output
 
-Authors
--------
+  * `INTERACTIVE_COMMENTS` allows comments starting with `#` in the shell.
+  * `NO_CLOBBER` disallows `>` to overwrite existing files. Use `>|` or `>!` instead.
 
-*The authors of this module should be contacted via the [issue tracker][2].*
+### Job control
 
-  - [Sorin Ionescu](https://github.com/sorin-ionescu)
-
-[1]: https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zshenv
-[2]: https://github.com/sorin-ionescu/prezto/issues
+  * `LONG_LIST_JOBS` lists jobs in verbose format by default.
+  * `NO_BG_NICE` prevents background jobs being given a lower priority.
+  * `NO_CHECK_JOBS` prevents status report of jobs on shell exit.
+  * `NO_HUP` prevents SIGHUP to jobs on shell exit.

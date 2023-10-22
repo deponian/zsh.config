@@ -1,7 +1,7 @@
 Automatic installation
 ------------
 
-  Use ``install.sh`` script from root of repository
+  Use ``install.sh`` script from the root of the repository
 
 
 Manual installation
@@ -16,15 +16,14 @@ Manual installation
   2. Clone the repository:
 
      ```console
-     git clone --recursive https://github.com/deponian/zsh.config.git "${ZDOTDIR:-$HOME}/.zprezto"
+     git clone --recursive https://github.com/deponian/zsh.config.git "${ZDOTDIR:-$HOME}/.zim"
      ```
 
-  3. Create a new Zsh configuration by copying the Zsh configuration files
-     provided:
+  3. Create a new Zsh configuration by copying the Zsh configuration files provided:
 
      ```sh
      setopt EXTENDED_GLOB
-     for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
+     for rcfile in "${ZDOTDIR:-$HOME}"/.zim/runcoms/*; do
        ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
      done
      ```

@@ -3,30 +3,26 @@
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   Rufus Deponian <rufus@deponian.com>
 #
-
-#
-# Browser
-#
-
-if [[ "$OSTYPE" == darwin* ]]; then
-  export BROWSER='open'
-fi
 
 #
 # Editors and pagers
 #
 
-export EDITOR='nvim'
-export VISUAL='nvim'
 export PAGER='less'
-export MANPAGER='nvim +Man!'
 
-#
-# Fix for vim as manpager on Fedora (see https://github.com/vim/vim/issues/2823)
-#
-
-export GROFF_NO_SGR=1
+if (( ${+commands[nvim]} )); then
+  export EDITOR='nvim'
+  export VISUAL='nvim'
+  export MANPAGER='nvim +Man!'
+elif (( ${+commands[vim]} )); then
+  export EDITOR='vim'
+  export VISUAL='vim'
+else
+  export EDITOR='vi'
+  export VISUAL='vi'
+fi
 
 #
 # Time
@@ -46,7 +42,9 @@ fi
 # Date format
 #
 
-export LC_TIME='en_GB.UTF-8'
+if [[ -z "$LC_TIME" ]]; then
+  export LC_TIME='en_GB.UTF-8'
+fi
 
 #
 # Paths
@@ -54,19 +52,6 @@ export LC_TIME='en_GB.UTF-8'
 
 # Ensure path arrays do not contain duplicates.
 typeset -gU cdpath fpath mailpath path
-
-# Set the list of directories that cd searches.
-# cdpath=(
-#   $cdpath
-# )
-
-# Set the list of directories that Zsh searches for programs.
-path=(
-  /usr/local/{bin,sbin}
-  /usr/{bin,sbin}
-  /{bin,sbin}
-  #$path
-)
 
 #
 # Less
