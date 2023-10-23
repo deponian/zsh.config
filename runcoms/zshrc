@@ -119,6 +119,13 @@ unset key
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=53,fg=226,bold'
 
 #
+# environment
+#
+
+export HISTSIZE=7000000
+export SAVEHIST="${HISTSIZE}"
+
+#
 # prompt
 #
 
