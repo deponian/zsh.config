@@ -29,8 +29,8 @@ w(){
 
 	command="$*"
 
-	rm /tmp/w-old
-	rm /tmp/w-new
+	rm -f /tmp/w-old
+	rm -f /tmp/w-new
 	touch /tmp/w-old
 	touch /tmp/w-new
 
