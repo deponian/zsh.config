@@ -12,5 +12,5 @@ source /home/rufus/.zim/modules/k/init.zsh
 source /home/rufus/.zim/modules/powerlevel10k/powerlevel10k.zsh-theme
 source /home/rufus/.zim/modules/completion/init.zsh
 source /home/rufus/.zim/modules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /home/rufus/.zim/deponian/zsh-history-substring-search/zsh-history-substring-search.zsh
+source /home/rufus/.zim/modules/zsh-history-substring-search/zsh-history-substring-search.zsh
 source /home/rufus/.zim/modules/zsh-autosuggestions/zsh-autosuggestions.zsh

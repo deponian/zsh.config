@@ -17,8 +17,6 @@ zmodule utility
 zmodule ${ZIM_HOME}/deponian/utility -n utility-personal
 # Fzf
 zmodule ${ZIM_HOME}/deponian/fzf
-# Kubernetes
-zmodule k
 
 #
 # Prompt
