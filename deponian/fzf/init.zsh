@@ -18,7 +18,7 @@ export FZF_HEIGHT='70%'
 export FZF_WIDTH='right:60%'
 
 # Use preview window with Ctrl-T
-export FZF_CTRL_T_OPTS="--preview-window=${FZF_WIDTH:-right:50%} --preview '(bat --tabs 2 --color=always --style=header,grid --line-range :300 {} || cat {} | head -300) 2> /dev/null'"
+export FZF_CTRL_T_OPTS="--preview-window=${FZF_WIDTH:-right:50%} --preview '(bat --tabs 2 --color=always --theme=base16 --style=header,grid --line-range :300 {} || cat {} | head -300) 2> /dev/null'"
 # If tree command is installed, show directory contents in preview pane when use Alt-C
 if (( $+commands[tree] )); then
   export FZF_ALT_C_OPTS="--preview 'tree -L 1 -C {} | head -200'"
