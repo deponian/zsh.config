@@ -29,10 +29,12 @@ w(){
 
 	command="$*"
 
-	rm -f /tmp/w-old
-	rm -f /tmp/w-new
-	touch /tmp/w-old
-	touch /tmp/w-new
+  rnd="${RANDOM}"
+
+	rm -f "/tmp/w-old-${rnd}"
+	rm -f "/tmp/w-new-${rnd}"
+	touch "/tmp/w-old-${rnd}"
+	touch "/tmp/w-new-${rnd}"
 
 	# make cursor invisible
 	tput civis
@@ -50,10 +52,10 @@ w(){
 
 		eval "${command}" | while IFS= read -r new_line; do
 			tput el # clear to end of line
-			echo "${new_line}" >> /tmp/w-new
+			echo "${new_line}" >> "/tmp/w-new-${rnd}"
 
-			old_line="$(head -1 /tmp/w-old)"
-			sed -i '1d' /tmp/w-old
+			old_line="$(head -1 "/tmp/w-old-${rnd}")"
+			sed -i '1d' "/tmp/w-old-${rnd}"
 
 			# color line if it's changed
 			if diff <(echo "${old_line}") <(echo "${new_line}") > /dev/null; then
@@ -67,8 +69,8 @@ w(){
 
 		sleep "${period}"
 
-		mv /tmp/w-new /tmp/w-old
-		touch /tmp/w-new
+		mv "/tmp/w-new-${rnd}" "/tmp/w-old-${rnd}"
+		touch "/tmp/w-new-${rnd}"
 	done
 }
 
