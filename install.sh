@@ -9,8 +9,10 @@ for rcfile in "${ZDOTDIR:-$HOME}"/.zim/runcoms/*; do
 	ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
 done
 
-echo "::: Changing default shell to zsh"
-until chsh -s /usr/bin/zsh; do
-	echo "Wrong password."
-done
+if [[ "${1}" != "nochsh" ]]; then
+  echo "::: Changing default shell to zsh"
+  until chsh -s /usr/bin/zsh; do
+    echo "Wrong password."
+  done
+fi
 
