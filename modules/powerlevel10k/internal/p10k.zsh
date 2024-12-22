@@ -1179,7 +1179,7 @@ function _p9k_parse_aws_config() {
 ################################################################
 # AWS Profile
 prompt_aws() {
-  typeset -g P9K_AWS_PROFILE="${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}"
+  typeset -g P9K_AWS_PROFILE="${AWS_SSO_PROFILE:-${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}}"
   local pat class state
   for pat class in "${_POWERLEVEL9K_AWS_CLASSES[@]}"; do
     if [[ $P9K_AWS_PROFILE == ${~pat} ]]; then
@@ -1314,7 +1314,7 @@ function _p9k_fvm_old() {
 }
 
 function _p9k_fvm_new() {
-  _p9k_upglob .fvm @ && return 1
+  _p9k_upglob .fvm/flutter_sdk @ && return 1
   local sdk=$_p9k__parent_dirs[$?]/.fvm/flutter_sdk
   if [[ ${sdk:A} == (#b)*/versions/([^/]##) ]]; then
     _p9k_prompt_segment prompt_fvm blue $_p9k_color1 FLUTTER_ICON 0 '' ${match[1]//\%/%%}
@@ -1410,6 +1410,9 @@ _p9k_prompt_battery_set_args() {
       local -i is_full=1 is_calculating is_charching
       local dir
       for dir in $bats; do
+        _p9k_read_file $dir/status(N) && local bat_status=$_p9k__ret || continue
+        # Skip batteries with "Unknown" status: https://github.com/romkatv/powerlevel10k/pull/2562.
+        [[ $bat_status == Unknown ]] && continue
         local -i pow=0 full=0
         if _p9k_read_file $dir/(energy_full|charge_full|charge_counter)(N); then
           (( energy_full += ${full::=_p9k__ret} ))
@@ -1422,7 +1425,6 @@ _p9k_prompt_battery_set_args() {
         elif _p9k_read_file $dir/(energy|charge)_now(N); then
           (( energy_now += _p9k__ret ))
         fi
-        _p9k_read_file $dir/status(N) && local bat_status=$_p9k__ret || continue
         [[ $bat_status != Full                                ]] && is_full=0
         [[ $bat_status == Charging                            ]] && is_charching=1
         [[ $bat_status == (Charging|Discharging) && $pow == 0 ]] && is_calculating=1
@@ -2317,7 +2319,11 @@ prompt_laravel_version() {
   [[ -r $app ]] || return
   if ! _p9k_cache_stat_get $0 $dir/artisan $app; then
     local v="$(php $dir/artisan --version 2> /dev/null)"
-    _p9k_cache_stat_set "${${(M)v:#Laravel Framework *}#Laravel Framework }"
+    v="${${(M)v:#Laravel Framework *}#Laravel Framework }"
+    # In some versions the output is colorized.
+    # https://github.com/romkatv/powerlevel10k/issues/2534
+    v=${${v#$'\e['<->m}%$'\e['<->m}
+    _p9k_cache_stat_set "$v"
   fi
   [[ -n $_p9k__cache_val[1] ]] || return
   _p9k_prompt_segment "$0" "maroon" "white" 'LARAVEL_ICON' 0 '' "${_p9k__cache_val[1]//\%/%%}"
@@ -3714,20 +3720,9 @@ function +vi-hg-bookmarks() {
 
 function +vi-vcs-detect-changes() {
   if [[ "${hook_com[vcs]}" == "git" ]]; then
-
     local remote="$(git ls-remote --get-url 2> /dev/null)"
-    if [[ "$remote" =~ "github" ]] then
-      vcs_visual_identifier='VCS_GIT_GITHUB_ICON'
-    elif [[ "$remote" =~ "bitbucket" ]] then
-      vcs_visual_identifier='VCS_GIT_BITBUCKET_ICON'
-    elif [[ "$remote" =~ "stash" ]] then
-      vcs_visual_identifier='VCS_GIT_BITBUCKET_ICON'
-    elif [[ "$remote" =~ "gitlab" ]] then
-      vcs_visual_identifier='VCS_GIT_GITLAB_ICON'
-    else
-      vcs_visual_identifier='VCS_GIT_ICON'
-    fi
-
+    _p9k_vcs_icon "$remote"
+    vcs_visual_identifier=$_p9k__ret
   elif [[ "${hook_com[vcs]}" == "hg" ]]; then
     vcs_visual_identifier='VCS_HG_ICON'
   elif [[ "${hook_com[vcs]}" == "svn" ]]; then
@@ -3860,18 +3855,14 @@ function _p9k_vcs_status_purge() {
 }
 
 function _p9k_vcs_icon() {
-  case "$VCS_STATUS_REMOTE_URL" in
-    *github*)                          _p9k__ret=VCS_GIT_GITHUB_ICON;;
-    *bitbucket*)                       _p9k__ret=VCS_GIT_BITBUCKET_ICON;;
-    *stash*)                           _p9k__ret=VCS_GIT_BITBUCKET_ICON;;
-    *gitlab*)                          _p9k__ret=VCS_GIT_GITLAB_ICON;;
-    # Azure DevOps: visualstudio.com is the old hostname, dev.azure.com is the new one.
-    # https://learn.microsoft.com/en-us/azure/devops/repos/git/use-ssh-keys-to-authenticate
-    (|*@|*.)(visualstudio.com|dev.azure.com)(|:*|/*))
-      _p9k__ret=VCS_GIT_AZURE_ICON
-    ;;  # old
-    *)                                 _p9k__ret=VCS_GIT_ICON;;
-  esac
+  local pat icon
+  for pat icon in "${(@)_POWERLEVEL9K_VCS_GIT_REMOTE_ICONS}"; do
+    if [[ $1 == $~pat ]]; then
+      _p9k__ret=$icon
+      return
+    fi
+  done
+  _p9k__ret=
 }
 
 function _p9k_vcs_render() {
@@ -3901,7 +3892,7 @@ function _p9k_vcs_render() {
         state=CLEAN
       fi
     fi
-    _p9k_vcs_icon
+    _p9k_vcs_icon "$VCS_STATUS_REMOTE_URL"
     _p9k_prompt_segment prompt_vcs_$state "${__p9k_vcs_states[$state]}" "$_p9k_color1" "$_p9k__ret" 0 '' ""
     return 0
   fi
@@ -3955,7 +3946,7 @@ function _p9k_vcs_render() {
 
       # It's weird that removing vcs-detect-changes from POWERLEVEL9K_VCS_GIT_HOOKS gets rid
       # of the GIT icon. That's what vcs_info does, so we do the same in the name of compatibility.
-      _p9k_vcs_icon
+      _p9k_vcs_icon "$VCS_STATUS_REMOTE_URL"
       icon=$_p9k__ret
     fi
 
@@ -4265,6 +4256,36 @@ function instant_prompt_chezmoi_shell() {
   _p9k_prompt_segment prompt_chezmoi_shell blue $_p9k_color1 CHEZMOI_ICON 1 '$CHEZMOI_ICON' ''
 }
 
+function _p9k_parse_virtualenv_cfg() {
+  typeset -ga reply=(0)
+  [[ -f $1 && -r $1 ]] || return
+
+  local cfg
+  cfg=$(<$1) || return
+
+  local -a match mbegin mend
+  [[ $'\n'$cfg$'\n' == (#b)*$'\n'prompt[$' \t']#=([^$'\n']#)$'\n'* ]] || return
+  local res=${${match[1]##[$' \t']#}%%[$' \t']#}
+  if [[ $res == (\"*\"|\'*\') ]]; then
+    # The string is quoted in python style, which isn't the same as quoting in zsh.
+    # For example, the literal 'foo"\'bar' denotes foo"'bar in python but in zsh
+    # it is malformed.
+    #
+    # We cheat a bit and impelement not exactly correct unquoting. It may produce
+    # different visual results but won't perform unintended expansions or bleed out
+    # any escape sequences.
+    #
+    # Note that venv performs unusual and obviously unintended expansions on the
+    # value of `prompt`: single-word expansions are performed twice by `activate`,
+    # and then again on every prompt if `prompt_subst` is in effect. While in general
+    # I am OK with being bug-compatible with other software, the bugs in venv are a
+    # bit too extreme for my comfort. I am going to disable all expansions and
+    # display the configured prompt literally.
+    res=${(Vg:e:)${res[2,-2]}}
+  fi
+  reply=(1 "$res")
+}
+
 ################################################################
 # Virtualenv: current working virtualenv
 # More information on virtualenv (Python):
@@ -4274,11 +4295,21 @@ prompt_virtualenv() {
   if (( _POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION )) && _p9k_python_version; then
     msg="${_p9k__ret//\%/%%} "
   fi
-  local v=${VIRTUAL_ENV:t}
-  if [[ $VIRTUAL_ENV_PROMPT == '('?*') ' && $VIRTUAL_ENV_PROMPT != "($v) " ]]; then
-    v=$VIRTUAL_ENV_PROMPT[2,-3]
-  elif [[ $v == $~_POWERLEVEL9K_VIRTUALENV_GENERIC_NAMES ]]; then
-    v=${VIRTUAL_ENV:h:t}
+  local cfg=$VIRTUAL_ENV/pyvenv.cfg
+  if ! _p9k_cache_stat_get $0 $cfg; then
+    local -a reply
+    _p9k_parse_virtualenv_cfg $cfg
+    _p9k_cache_stat_set "${reply[@]}"
+  fi
+  if (( _p9k__cache_val[1] )); then
+    local v=$_p9k__cache_val[2]
+  else
+    local v=${VIRTUAL_ENV:t}
+    if [[ $VIRTUAL_ENV_PROMPT == '('?*') ' && $VIRTUAL_ENV_PROMPT != "($v) " ]]; then
+      v=$VIRTUAL_ENV_PROMPT[2,-3]
+    elif [[ $v == $~_POWERLEVEL9K_VIRTUALENV_GENERIC_NAMES ]]; then
+      v=${VIRTUAL_ENV:h:t}
+    fi
   fi
   msg+="$_POWERLEVEL9K_VIRTUALENV_LEFT_DELIMITER${v//\%/%%}$_POWERLEVEL9K_VIRTUALENV_RIGHT_DELIMITER"
   case $_POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV in
@@ -4924,6 +4955,18 @@ function instant_prompt_ranger() {
   _p9k_prompt_segment prompt_ranger $_p9k_color1 yellow RANGER_ICON 1 '$RANGER_LEVEL' '$RANGER_LEVEL'
 }
 
+function prompt_yazi() {
+  _p9k_prompt_segment $0 $_p9k_color1 yellow YAZI_ICON 0 '' $YAZI_LEVEL
+}
+
+_p9k_prompt_yazi_init() {
+  typeset -g "_p9k__segment_cond_${_p9k__prompt_side}[_p9k__segment_index]"='$YAZI_LEVEL'
+}
+
+function instant_prompt_yazi() {
+  _p9k_prompt_segment prompt_yazi $_p9k_color1 yellow YAZI_ICON 1 '$YAZI_LEVEL' '$YAZI_LEVEL'
+}
+
 function prompt_midnight_commander() {
   local -i len=$#_p9k__prompt _p9k__has_upglob
   _p9k_prompt_segment $0 $_p9k_color1 yellow MIDNIGHT_COMMANDER_ICON 0 '' ''
@@ -5082,7 +5125,7 @@ function _p9k_timewarrior_clear() {
 
 function prompt_timewarrior() {
   local dir
-  [[ -n ${dir::=$TIMEWARRIORDB} || -n ${dir::=~/.timewarrior}(#qN/) ]] ||
+  [[ -n ${dir::=$TIMEWARRIORDB} || -n ${dir::=~/.timewarrior}(#q-/N) ]] ||
     dir=${XDG_DATA_HOME:-~/.local/share}/timewarrior
   dir+=/data
   local -a stat
@@ -5191,7 +5234,10 @@ function _p9k_taskwarrior_check_data() {
 }
 
 function _p9k_taskwarrior_init_data() {
-  local -a stat files=($_p9k_taskwarrior_data_dir/{pending,completed}.data)
+  local -a stat files=(
+    $_p9k_taskwarrior_data_dir/{pending,completed}.data
+    $_p9k_taskwarrior_data_dir/taskchampion.sqlite3
+  )
   _p9k_taskwarrior_data_files=($^files(N))
   _p9k_taskwarrior_data_non_files=(${files:|_p9k_taskwarrior_data_files})
   if (( $#_p9k_taskwarrior_data_files )); then
@@ -5218,7 +5264,9 @@ function _p9k_taskwarrior_init_data() {
     local -a ts
     ts=($(command task +PENDING -OVERDUE list rc.verbose=nothing rc.color=0 rc._forcecolor=0 \
       rc.report.list.labels= rc.report.list.columns=due.epoch </dev/null 2>/dev/null)) || ts=()
-    if (( $#ts )); then
+    # The second condition is a workaround for a bug in taskwarrior v3.0.1.
+    # https://github.com/romkatv/powerlevel10k/issues/2648.
+    if (( $#ts && ! ${#${(@)ts:#(|-)<->(|.<->)}} )); then
       _p9k_taskwarrior_next_due=${${(on)ts}[1]}
       (( _p9k_taskwarrior_next_due > EPOCHSECONDS )) || _p9k_taskwarrior_next_due=$((EPOCHSECONDS+60))
     fi
@@ -5704,15 +5752,19 @@ prompt_cpu_arch() {
     state=$_p9k__cache_val[1]
     text=$_p9k__cache_val[2]
   else
-    local cmd
-    for cmd in machine arch; do
-      (( $+commands[$cmd] )) || continue
-      if text=$(command -- $cmd) 2>/dev/null && [[ $text == [a-zA-Z][a-zA-Z0-9_]# ]]; then
-        break
-      else
-        text=
-      fi
-    done
+    if [[ -r /proc/sys/kernel/arch ]]; then
+      text=$(</proc/sys/kernel/arch)
+    else
+      local cmd
+      for cmd in machine arch; do
+        (( $+commands[$cmd] )) || continue
+        if text=$(command -- $cmd) 2>/dev/null && [[ $text == [a-zA-Z][a-zA-Z0-9_]# ]]; then
+          break
+        else
+          text=
+        fi
+      done
+    fi
     state=_${${(U)text}//İ/I}
     _p9k_cache_ephemeral_set "$state" "$text"
   fi
@@ -5764,7 +5816,7 @@ _p9k_preexec2() {
   typeset -g _p9k__preexec_cmd=$2
   _p9k__timer_start=EPOCHREALTIME
   P9K_TTY=old
-  (( ! $+_p9k__iterm_cmd )) || _p9k_iterm2_preexec
+  (( ! $+_p9k__iterm_cmd )) || _p9k_iterm2_preexec "$1"
 }
 
 function _p9k_prompt_net_iface_init() {
@@ -6644,7 +6696,7 @@ function _p9k_clear_instant_prompt() {
       fi
       print -rn -- $terminfo[rc]${(%):-%b%k%f%s%u}$terminfo[ed]
       local unexpected=${${content//$'\e[?'<->'c'}//$'\e['<->' q'}
-      unexpected=${(S)unexpected//$'\eP'*[^$'\e']#($'\e\\')}
+      unexpected=${(S)unexpected//$'\eP'(|*[^$'\e'])($'\e\e')#$'\e\\'}
       unexpected=${(S)unexpected//$'\e'[^$'\a\e']#($'\a'|$'\e\\')}
       # Visual Studio Code prints this garbage.
       unexpected=${${unexpected//$'\033[1;32mShell integration activated\033[0m\n'}//$'\r'}
@@ -6692,9 +6744,9 @@ function _p9k_clear_instant_prompt() {
           echo -E - ""
           echo -E - "${(%):-For details, see:}"
           if (( _p9k_term_has_href )); then
-            echo    - "${(%):-\e]8;;https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt\ahttps://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt\e]8;;\a}"
+            echo    - "${(%):-\e]8;;https://github.com/romkatv/powerlevel10k#instant-prompt\ahttps://github.com/romkatv/powerlevel10k#instant-prompt\e]8;;\a}"
           else
-            echo    - "${(%):-https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt}"
+            echo    - "${(%):-https://github.com/romkatv/powerlevel10k#instant-prompt}"
           fi
           echo -E - ""
           echo    - "${(%):-%3F-- console output produced during zsh initialization follows --%f}"
@@ -7406,6 +7458,36 @@ _p9k_init_params() {
   _p9k_declare -b POWERLEVEL9K_VCS_CONFLICTED_STATE 0
   _p9k_declare -b POWERLEVEL9K_HIDE_BRANCH_ICON 0
   _p9k_declare -b POWERLEVEL9K_VCS_HIDE_TAGS 0
+  _p9k_declare -a POWERLEVEL9K_VCS_GIT_REMOTE_ICONS
+  if (( $+_POWERLEVEL9K_VCS_GIT_REMOTE_ICONS )); then
+    (( $#_POWERLEVEL9K_VCS_GIT_REMOTE_ICONS & 1 )) && _POWERLEVEL9K_VCS_GIT_REMOTE_ICONS+=('')
+  else
+    local domain= icon= domain2icon=(
+      'archlinux.org'                  VCS_GIT_ARCHLINUX_ICON
+      'dev.azure.com|visualstudio.com' VCS_GIT_AZURE_ICON
+      'bitbucket.org'                  VCS_GIT_BITBUCKET_ICON
+      'codeberg.org'                   VCS_GIT_CODEBERG_ICON
+      'debian.org'                     VCS_GIT_DEBIAN_ICON
+      'freebsd.org'                    VCS_GIT_FREEBSD_ICON
+      'freedesktop.org'                VCS_GIT_FREEDESKTOP_ICON
+      'gitea.com|gitea.io'             VCS_GIT_GITEA_ICON
+      'github.com'                     VCS_GIT_GITHUB_ICON
+      'gitlab.com'                     VCS_GIT_GITLAB_ICON
+      'gnome.org'                      VCS_GIT_GNOME_ICON
+      'gnu.org'                        VCS_GIT_GNU_ICON
+      'kde.org'                        VCS_GIT_KDE_ICON
+      'kernel.org'                     VCS_GIT_LINUX_ICON
+      'sr.ht'                          VCS_GIT_SOURCEHUT_ICON
+    )
+    typeset -ga _POWERLEVEL9K_VCS_GIT_REMOTE_ICONS
+    for domain icon in "${domain2icon[@]}"; do
+      _POWERLEVEL9K_VCS_GIT_REMOTE_ICONS+=(
+        '(|[A-Za-z0-9][A-Za-z0-9+.-]#://)(|[^:/?#]#[.@])((#i)'$domain')(|[/:?#]*)'
+        $icon
+      )
+    done
+    _POWERLEVEL9K_VCS_GIT_REMOTE_ICONS+=('*' VCS_GIT_ICON)
+  fi
   _p9k_declare -i POWERLEVEL9K_CHANGESET_HASH_LENGTH 8
   # Specifies the maximum number of elements in the cache. When the cache grows over this limit,
   # it gets cleared. This is meant to avoid memory leaks when a rogue prompt is filling the cache
@@ -8552,8 +8634,14 @@ function _p9k_init_cacheable() {
         fi
         case $os_release_id in
           *arch*)                  _p9k_set_os Linux LINUX_ARCH_ICON;;
-          *debian*)                _p9k_set_os Linux LINUX_DEBIAN_ICON;;
           *raspbian*)              _p9k_set_os Linux LINUX_RASPBIAN_ICON;;
+          *debian*)
+            if [[ -f /etc/apt/sources.list.d/raspi.list ]]; then
+              _p9k_set_os Linux LINUX_RASPBIAN_ICON
+            else
+              _p9k_set_os Linux LINUX_DEBIAN_ICON
+            fi
+          ;;
           *ubuntu*)                _p9k_set_os Linux LINUX_UBUNTU_ICON;;
           *elementary*)            _p9k_set_os Linux LINUX_ELEMENTARY_ICON;;
           *fedora*)                _p9k_set_os Linux LINUX_FEDORA_ICON;;
@@ -8577,7 +8665,9 @@ function _p9k_init_cacheable() {
           amzn)                    _p9k_set_os Linux LINUX_AMZN_ICON;;
           endeavouros)             _p9k_set_os Linux LINUX_ENDEAVOUROS_ICON;;
           rocky)                   _p9k_set_os Linux LINUX_ROCKY_ICON;;
+          almalinux)               _p9k_set_os Linux LINUX_ALMALINUX_ICON;;
           guix)                    _p9k_set_os Linux LINUX_GUIX_ICON;;
+          neon)                    _p9k_set_os Linux LINUX_NEON_ICON;;
           *)                       _p9k_set_os Linux LINUX_ICON;;
         esac
         ;;
@@ -8792,7 +8882,17 @@ function _p9k_iterm2_precmd() {
 }
 
 function _p9k_iterm2_preexec() {
-  [[ -t 1 ]] && builtin print -n '\e]133;C;\a'
+  if [[ -t 1 ]]; then
+    if (( ${+__p9k_use_osc133_c_cmdline} )); then
+      () {
+        emulate -L zsh -o extended_glob -o no_multibyte
+        local MATCH MBEGIN MEND
+        builtin printf '\e]133;C;cmdline_url=%s\a' "${1//(#m)[^a-zA-Z0-9"\/:_.-!'()~"]/%${(l:2::0:)$(([##16]#MATCH))}}"
+      } "$1"
+    else
+      builtin print -n '\e]133;C;\a'
+    fi
+  fi
   typeset -gi _p9k__iterm_cmd=2
 }
 
@@ -8922,9 +9022,9 @@ _p9k_init() {
       >&2 echo -E - ""
       >&2 echo -E - "${(%):-  - %BRecommended%b: Change the way Powerlevel10k is loaded from %B$__p9k_zshrc_u%b.}"
       if (( _p9k_term_has_href )); then
-        >&2 echo    - "${(%):-    See \e]8;;https://github.com/romkatv/powerlevel10k/blob/master/README.md#installation\ahttps://github.com/romkatv/powerlevel10k/blob/master/README.md#installation\e]8;;\a.}"
+        >&2 echo    - "${(%):-    See \e]8;;https://github.com/romkatv/powerlevel10k#installation\ahttps://github.com/romkatv/powerlevel10k#installation\e]8;;\a.}"
       else
-        >&2 echo    - "${(%):-    See https://github.com/romkatv/powerlevel10k/blob/master/README.md#installation.}"
+        >&2 echo    - "${(%):-    See https://github.com/romkatv/powerlevel10k#installation.}"
       fi
       if (( $+zsh_defer_options )); then
         >&2 echo -E - ""
@@ -8997,6 +9097,7 @@ _p9k_precmd_first() {
   if [[ -n $KITTY_SHELL_INTEGRATION && KITTY_SHELL_INTEGRATION[(wIe)no-prompt-mark] -eq 0 ]]; then
     KITTY_SHELL_INTEGRATION+=' no-prompt-mark'
     (( $+__p9k_force_term_shell_integration )) || typeset -gri __p9k_force_term_shell_integration=1
+    (( $+__p9k_use_osc133_c_cmdline         )) || typeset -gri __p9k_use_osc133_c_cmdline=1
   elif [[ $TERM_PROGRAM == WarpTerminal ]]; then
     (( $+__p9k_force_term_shell_integration )) || typeset -gri __p9k_force_term_shell_integration=1
   fi
@@ -9398,7 +9499,11 @@ if [[ $__p9k_dump_file != $__p9k_instant_prompt_dump_file && -n $__p9k_instant_p
   zf_rm -f -- $__p9k_instant_prompt_dump_file{,.zwc} 2>/dev/null
 fi
 
-typeset -g P9K_VERSION=1.19.10
+typeset -g P9K_VERSION=1.20.14
+
+if [[ ${VSCODE_SHELL_INTEGRATION-} == <1-> && ${+__p9k_force_term_shell_integration} == 0 ]]; then
+  typeset -gri __p9k_force_term_shell_integration=1
+fi
 unset VSCODE_SHELL_INTEGRATION
 
 _p9k_init_ssh

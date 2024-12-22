@@ -1,6 +1,15 @@
 # Changes in HEAD
 
 
+- Highlight `&>` `>&|` `>&!` `&>|` and `&>!` as redirection.
+  [#942]
+
+
+# Changes in 0.8.0
+
+This is a stable bugfix and feature release.  Major new features and changes include:
+
+
 ## Changes fixed as part of the switch to zle-line-pre-redraw
 
 The changes in this section were fixed by switching to a `zle-line-pre-redraw`-based
