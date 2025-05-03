@@ -44,6 +44,10 @@ if command -v cyme &> /dev/null; then
 	alias lsusb=cyme
 fi
 
+if command -v duf &> /dev/null; then
+	alias df=duf
+fi
+
 #
 # Bindings
 #
