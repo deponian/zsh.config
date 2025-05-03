@@ -40,6 +40,10 @@ if command -v curlie &> /dev/null; then
 	alias curl=curlie
 fi
 
+if command -v cyme &> /dev/null; then
+	alias lsusb=cyme
+fi
+
 #
 # Bindings
 #
