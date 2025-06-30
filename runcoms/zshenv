@@ -9,3 +9,21 @@
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
+
+# create XDG_* variables on macOS
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+  # Define XDG Base directory environment variables
+  export XDG_BIN_HOME="$HOME/.local/bin"
+  export XDG_CACHE_HOME="$HOME/Library/Caches"
+  export XDG_CONFIG_HOME="$HOME/.config"
+  export XDG_DATA_HOME="$HOME/.local/share"
+  export XDG_STATE_HOME="$HOME/.local/state"
+  export PATH="$XDG_BIN_HOME:$PATH"
+
+  # Define paths for common programs not using XDG
+  export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+  export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+  export NPM_CONFIG_TMP="$XDG_RUNTIME_DIR/npm"
+  export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+fi
+
