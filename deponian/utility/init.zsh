@@ -16,21 +16,22 @@ alias rsync='rsync --progress'
 alias rc="sed 's/\x1b\[[0-9;]*m//g'" # [r]emove [c]olor
 alias clear='clear -x'
 alias bat='bat --paging=never --theme="base16" --style=header'
-alias cat='bat --paging=never --theme="base16" --plain'
 alias red='rg --passthru --color=always --colors "match:fg:red"'
 alias green='rg --passthru --color=always --colors "match:fg:green"'
 alias blue='rg --passthru --color=always --colors "match:fg:blue"'
 alias vimdiff='nvim -d'
 alias cmdforeach='xargs -i zsh -c'
 alias .='nvim'
-alias open='xdg-open'
-alias restartgraphics='nohup kwin_x11 --replace &'
 
 # work
 alias K='kubectl'
 alias kuc='kubectl config use-context'
 alias kcc='kubectl config current-context'
 alias gho='gh browse'
+
+if command -v bat &> /dev/null; then
+  alias cat='bat --paging=never --theme="base16" --plain'
+fi
 
 if command -v nvim &> /dev/null; then
 	alias vim=nvim # Use `\vim` or `command vim` to get the real vim.
@@ -46,6 +47,10 @@ fi
 
 if command -v duf &> /dev/null; then
 	alias df=duf
+fi
+
+if [[ ! "$OSTYPE" =~ ^darwin ]]; then
+  alias open='xdg-open'
 fi
 
 #
