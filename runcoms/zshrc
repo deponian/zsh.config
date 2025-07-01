@@ -131,3 +131,9 @@ export SAVEHIST="${HISTSIZE}"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# user's local path
+export PATH="${HOME}/.local/bin:${PATH}"
+
+# source local per-host configuration
+[[ -f ~/.zim/runcoms/zshrc.local ]] && source ~/.zim/runcoms/zshrc.local
