@@ -1,7 +1,7 @@
 # set AWS environment variables
 
 aws-set-env(){
-	aws_profile="${1}"
+	local aws_profile="${1}"
 	if [[ -z "${aws_profile}" ]]; then
 		aws configure list-profiles
 		return
@@ -12,6 +12,9 @@ aws-set-env(){
 		echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
 		return
 	fi
+
+	unset AWS_ACCESS_KEY_ID
+	unset AWS_SECRET_ACCESS_KEY
 
 	export AWS_ACCESS_KEY_ID="$(aws configure --profile "${aws_profile}" get aws_access_key_id)"
 	export AWS_SECRET_ACCESS_KEY="$(aws configure --profile "${aws_profile}" get aws_secret_access_key)"
