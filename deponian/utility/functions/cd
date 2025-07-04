@@ -1,0 +1,11 @@
+# change behavior of cd without arguments on macOS
+
+cd(){
+	if [[ $# == 0 && "$OSTYPE" =~ ^darwin ]]; then
+		builtin cd "/Volumes/~"
+	else
+		builtin cd "$@"
+	fi
+}
+
+cd "$@"
