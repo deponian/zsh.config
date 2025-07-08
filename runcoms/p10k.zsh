@@ -223,29 +223,7 @@
   typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=true
   # Don't shorten directories that contain any of these files. They are anchors.
   local anchor_files=(
-    .bzr
-    .citc
-    .git
-    .hg
-    .node-version
-    .python-version
-    .go-version
-    .ruby-version
-    .lua-version
-    .java-version
-    .perl-version
-    .php-version
-    .tool-versions
-    .mise.toml
-    .shorten_folder_marker
-    .svn
-    .terraform
-    CVS
-    Cargo.toml
-    composer.json
-    go.mod
-    package.json
-    stack.yaml
+    .D712D4FE-8518-40B8-8463-DC5D72FCC3F4
   )
   typeset -g POWERLEVEL9K_SHORTEN_FOLDER_MARKER="(${(j:|:)anchor_files})"
   # If set to "first" ("last"), remove everything before the first (last) subdirectory that contains
@@ -258,7 +236,7 @@
   # This moves the truncation point to the right (positive offset) or to the left (negative offset)
   # relative to the marker. Plain "first" and "last" are equivalent to "first:0" and "last:0"
   # respectively.
-  typeset -g POWERLEVEL9K_DIR_TRUNCATE_BEFORE_MARKER=false
+  typeset -g POWERLEVEL9K_DIR_TRUNCATE_BEFORE_MARKER=first
   # Don't shorten this many last directory segments. They are anchors.
   typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
   # Shorten directory if it's longer than this even if there is space for it. The value can
