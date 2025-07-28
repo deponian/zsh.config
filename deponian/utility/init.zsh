@@ -24,10 +24,17 @@ alias cmdforeach='xargs -i zsh -c'
 alias .='nvim'
 
 # work
-alias K='kubectl'
-alias kuc='kubectl config use-context'
-alias kcc='kubectl config current-context'
 alias gho='gh browse'
+alias K='kubectl'
+alias kcc='kubectl config current-context'
+if [[ -z ${TMUX} ]]; then
+  alias kuc='kubectl config use-context'
+else
+kuc() {
+  kubectl config use-context "${1}"
+  tmux refresh-client -S
+}
+fi
 
 if command -v bat &> /dev/null; then
   alias cat='bat --paging=never --theme="base16" --plain'
