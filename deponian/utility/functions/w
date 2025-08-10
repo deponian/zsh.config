@@ -29,7 +29,7 @@ w(){
 
 	command="$*"
 
-  rnd="${RANDOM}"
+	rnd="${RANDOM}"
 
 	rm -f "/tmp/w-old-${rnd}"
 	rm -f "/tmp/w-new-${rnd}"
@@ -55,7 +55,13 @@ w(){
 			echo "${new_line}" >> "/tmp/w-new-${rnd}"
 
 			old_line="$(head -1 "/tmp/w-old-${rnd}")"
-			sed -i '1d' "/tmp/w-old-${rnd}"
+
+			if [[ "$OSTYPE" =~ ^darwin ]]; then
+				# macOS uses BSD version of sed so -i works a bit different
+				sed -i '' '1d' "/tmp/w-old-${rnd}"
+			else
+				sed -i '1d' "/tmp/w-old-${rnd}"
+			fi
 
 			# color line if it's changed
 			if diff <(echo "${old_line}") <(echo "${new_line}") > /dev/null; then
