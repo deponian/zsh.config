@@ -33,7 +33,7 @@ fi
   fi
 
   # Load and initialize the completion system
-  autoload -Uz compinit && compinit -C -d ${zdumpfile} || return 1
+  autoload -Uz compinit && compinit -C -d ${zdumpfile} && [[ -e ${zdumpfile} ]] || return 1
 
   if [[ ! ${zdumpfile}.dat -nt ${zdumpfile} ]]; then
     >! ${zdumpfile}.dat <<<${znew_dat}
@@ -76,7 +76,7 @@ setopt NO_LIST_BEEP
 zstyle ':completion::complete:*' use-cache on
 
 # Group matches and describe.
-zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' menu select
 zstyle ':completion:*:matches' group yes
 zstyle ':completion:*:options' description yes
 zstyle ':completion:*:options' auto-description '%d'
