@@ -26,6 +26,7 @@ alias .='nvim'
 # work
 alias gho='gh browse'
 alias K='kubectl'
+alias nodemonitor="sed -n '/^Allocated /,/^Events:/ { /^  [^(]/ p; } ; /^Name: / p'"
 alias kcc='kubectl config current-context'
 if [[ -z ${TMUX} ]]; then
   alias kuc='kubectl config use-context'
