@@ -70,6 +70,11 @@ bindkey -M emacs '\C-]' vi-match-bracket
 bindkey -M emacs '\C-H' backward-char
 bindkey -M emacs '\C-L' forward-char
 
+bindkey -M emacs '\C-U' undo
+
+bindkey -M emacs '\C-O' backward-word
+bindkey -M emacs '\C-P' forward-word
+
 #
 # LS_COLORS
 #
