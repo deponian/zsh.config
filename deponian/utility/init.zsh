@@ -75,6 +75,8 @@ bindkey -M emacs '\C-U' undo
 bindkey -M emacs '\C-O' backward-word
 bindkey -M emacs '\C-P' forward-word
 
+bindkey -M emacs '\C-X' edit-command-line
+
 #
 # LS_COLORS
 #
