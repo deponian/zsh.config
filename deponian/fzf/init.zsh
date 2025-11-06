@@ -9,7 +9,7 @@ elif (( $+commands[ag] )); then
 fi
 
 # Set default fzf opts
-export FZF_DEFAULT_OPTS='--info=inline:":: " --no-separator --prompt="■ " --pointer="●" --marker="›"'
+export FZF_DEFAULT_OPTS='--info=inline:":: " --no-separator --prompt="■ " --marker="›"'
 
 # Set height of fzf results
 export FZF_HEIGHT='70%'

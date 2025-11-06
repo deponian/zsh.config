@@ -1,6 +1,8 @@
-#compdef networkQuality
+#compdef distro-info ubuntu-distro-info debian-distro-info
+#
 # ------------------------------------------------------------------------------
-# Copyright (c) 2023 Github zsh-users - https://github.com/zsh-users
+# Copyright (c) 2025 Github zsh-users - https://github.com/zsh-users
+# All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,33 +26,29 @@
 # Description
 # -----------
 #
-#  Completion script for networkQuality on macOS 26
+#  Completion for distro-info
 #
 # ------------------------------------------------------------------------------
 # Authors
 # -------
 #
-#  * Shohei Yoshida (https://github.com/syohex) <syohex@gmail.com>
+#  * Shohei YOSHIDA (https://github.com/syohex)
 #
 # ------------------------------------------------------------------------------
 
 _arguments \
-  '-b[Show Bonjour advertised networkQuality servers]' \
-  '-B[Run against specified Bonjour instance]:name' \
-  '-C[Use custom configuration URL or path]:url_or_path' \
-  '-f[Force usage of a specific protocol selection]:option:(h1 h2 h3 L4S noL4S)' \
-  '-I[Bind test to interface]:interface:_net_interfaces' \
-  '-M[Maximum runtime in seconds]:seconds' \
-  '-r[Connect to host or IP]:host' \
-  '-S[Create a networkQuality server-instance running locally on the specified port]:port' \
-  '-c[Produce computer-readable output]:file:_files' \
-  '-d[Do not run a download test(implies -s)]' \
-  '-h[Show help]' \
-  '-k[Disable verification of the server identity via TLS]' \
-  '-p[Use iCloud Private Relay]' \
-  '-s[Run tests sequentially instead of parallel upload/download]' \
-  '-u[Do not run an upload test(implies -s)]' \
-  '-v[Verbose output]'
+  '(- *)'{-h,--help}'[display help message and exit]' \
+  '--date=[data for calculating the version]:date' \
+  '(-a --all)'{-a,--all}'[list all known versions]' \
+  '(-y --days)'{-y,--days=}'[display number of days until specified version reaches the specified milestone]:milestone:(created release eol eol-server)' \
+  '(-d --devel)'{-d,--devel}'[latest development version]' \
+  '--series=[series to calculate the version for]:series' \
+  '(-s --stable)'{-s,--stable}'[latest stable version]' \
+  '--supported[list of all supported version, including development releases]' \
+  '--unsupported[list of all unsupported stable versions]' \
+  '(-c --codename)'{-c,--codename}'[print the codename(default)]' \
+  '(-r --release)'{-r,--release}'[print the release version]' \
+  '(-f --fullname)'{-f,--fullname}'[print the full name]'
 
 # Local Variables:
 # mode: Shell-Script

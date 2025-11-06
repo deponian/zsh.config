@@ -1,6 +1,6 @@
-#compdef networkQuality
+#compdef lsmem
 # ------------------------------------------------------------------------------
-# Copyright (c) 2023 Github zsh-users - https://github.com/zsh-users
+# Copyright (c) 2025 Github zsh-users - https://github.com/zsh-users
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,7 +24,7 @@
 # Description
 # -----------
 #
-#  Completion script for networkQuality on macOS 26
+#  Completion script for lsmem v2.41 (https://github.com/util-linux/util-linux)
 #
 # ------------------------------------------------------------------------------
 # Authors
@@ -34,23 +34,35 @@
 #
 # ------------------------------------------------------------------------------
 
+(( $+functions[_lsmem_output_columns] )) ||
+_lsmem_output_columns() {
+  local -a columns=(
+    "RANGE[start and end address of the memory range]"
+    "SIZE[size of the memory range]"
+    "STATE[online status of the memory range]"
+    "REMOVABLE[memory is removable]"
+    "BLOCK[memory block number or blocks range]"
+    "NODE[numa node of memory]"
+    "ZONES[valid zones for the memory range]"
+  )
+
+  _values -s ',' column $columns
+}
+
 _arguments \
-  '-b[Show Bonjour advertised networkQuality servers]' \
-  '-B[Run against specified Bonjour instance]:name' \
-  '-C[Use custom configuration URL or path]:url_or_path' \
-  '-f[Force usage of a specific protocol selection]:option:(h1 h2 h3 L4S noL4S)' \
-  '-I[Bind test to interface]:interface:_net_interfaces' \
-  '-M[Maximum runtime in seconds]:seconds' \
-  '-r[Connect to host or IP]:host' \
-  '-S[Create a networkQuality server-instance running locally on the specified port]:port' \
-  '-c[Produce computer-readable output]:file:_files' \
-  '-d[Do not run a download test(implies -s)]' \
-  '-h[Show help]' \
-  '-k[Disable verification of the server identity via TLS]' \
-  '-p[Use iCloud Private Relay]' \
-  '-s[Run tests sequentially instead of parallel upload/download]' \
-  '-u[Do not run an upload test(implies -s)]' \
-  '-v[Verbose output]'
+  '(- *)'{-h,--help}'[display this help]' \
+  '(- *)'{-V,--version}'[display version]' \
+  '(-J --json)'{-J,--json}'[use the JSON output format]' \
+  '(-P --pairs)'{-P,--pairs}'[use key=value output format]' \
+  '(-a --all)'{-a,--all}'[list each individual memory block]' \
+  '(-b --bytes)'{-b,--bytes}'[print SIZE in bytes rather]' \
+  '(-n --noheadings)'{-n,--noheadings}'[do not print headings]' \
+  '(-o --output)'{-o,--output=-}'[output columns]:columns:_lsmem_output_columns' \
+  '(-o --output --output-all)--output-all[output all columns]' \
+  '(-r --raw)'{-r,--raw}'[use the raw output format]' \
+  '(-S --split)'{-S,--split}'[split ranges by specified columns]:columns:_lsmem_output_columns' \
+  '(-s --sysroot)'{-s,--sysroot}'[use the specified directory as system root]:dir:_files -/' \
+  '--summary=-[print summary information]:when:(never always only)'
 
 # Local Variables:
 # mode: Shell-Script

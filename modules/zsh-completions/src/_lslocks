@@ -1,6 +1,6 @@
-#compdef networkQuality
+#compdef lslocks
 # ------------------------------------------------------------------------------
-# Copyright (c) 2023 Github zsh-users - https://github.com/zsh-users
+# Copyright (c) 2025 Github zsh-users - https://github.com/zsh-users
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,7 +24,7 @@
 # Description
 # -----------
 #
-#  Completion script for networkQuality on macOS 26
+#  Completion script for lslocks v2.41 (https://github.com/util-linux/util-linux)
 #
 # ------------------------------------------------------------------------------
 # Authors
@@ -34,23 +34,39 @@
 #
 # ------------------------------------------------------------------------------
 
+(( $+functions[_lslocks_output_columns] )) ||
+_lslocks_output_columns() {
+  local -a columns=(
+    "COMMAND[command of the process holding the lock]"
+    "PID[PID of the process holding the lock]"
+    "TYPE[kind of lock]"
+    "SIZE[size of the locks]"
+    "INODE[inode number]"
+    "MAJ\\:MIN[major:minor device number]"
+    "MODE[lock access mode]"
+    "M[mandatory state of the lock: 0 (none), 1 (set)]"
+    "START[relative byte offset of the lock]"
+    "END[ending offset of the lock]"
+    "PATH[path of the locked file]"
+    "BLOCKER[PID of the process blocking the lock]"
+    "HOLDERS[holders of the lock]"
+  )
+
+  _values -s ',' column $columns
+}
+
 _arguments \
-  '-b[Show Bonjour advertised networkQuality servers]' \
-  '-B[Run against specified Bonjour instance]:name' \
-  '-C[Use custom configuration URL or path]:url_or_path' \
-  '-f[Force usage of a specific protocol selection]:option:(h1 h2 h3 L4S noL4S)' \
-  '-I[Bind test to interface]:interface:_net_interfaces' \
-  '-M[Maximum runtime in seconds]:seconds' \
-  '-r[Connect to host or IP]:host' \
-  '-S[Create a networkQuality server-instance running locally on the specified port]:port' \
-  '-c[Produce computer-readable output]:file:_files' \
-  '-d[Do not run a download test(implies -s)]' \
-  '-h[Show help]' \
-  '-k[Disable verification of the server identity via TLS]' \
-  '-p[Use iCloud Private Relay]' \
-  '-s[Run tests sequentially instead of parallel upload/download]' \
-  '-u[Do not run an upload test(implies -s)]' \
-  '-v[Verbose output]'
+  '(- *)'{-h,--help}'[display this help]' \
+  '(- *)'{-V,--version}'[display version]' \
+  '(-b --bytes)'{-b,--bytes}'[print SIZE in bytes rather]' \
+  '(-J --json)'{-J,--json}'[use the JSON output format]' \
+  '(-i --noinaccessible)'{-i,--noinaccessible}'[ignore locks without read permissions]' \
+  '(-o --output)'{-o,--output=-}'[output columns]:columns:_lslocks_output_columns' \
+  '(-o --output --output-all)--output-all[output all columns]' \
+  '(-p --pid)'{-p,--pid}'[display only locks held by this process]:pid:_pids' \
+  '(-r --raw)'{-r,--raw}'[use the raw output format]' \
+  '(-u --notruncate)'{-u,--notruncate}'[do not truncate text in columns]' \
+  '(- *)'{-H,--list-columns}'[list the available columns]'
 
 # Local Variables:
 # mode: Shell-Script
