@@ -19,7 +19,6 @@ alias bat='bat --paging=never --theme="base16" --style=header'
 alias red='rg --passthru --color=always --colors "match:fg:red"'
 alias green='rg --passthru --color=always --colors "match:fg:green"'
 alias blue='rg --passthru --color=always --colors "match:fg:blue"'
-alias vimdiff='nvim -d'
 alias cmdforeach='xargs -i zsh -c'
 
 # work

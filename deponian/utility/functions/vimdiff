@@ -1,0 +1,31 @@
+vimdiff() {
+  case $# in
+    2)
+      if [[ -f $1 && -f $2 ]]; then
+        nvim +"CodeDiff file $1 $2"
+      elif [[ -d $1 && -d $2 ]]; then
+        nvim +"CodeDiff dir $1 $2"
+      else
+        echo "vimdiff: both arguments must be files, or both must be directories" >&2
+        return 1
+      fi
+      ;;
+    1)
+      if [[ -f $1 ]]; then
+        nvim "$1" +"CodeDiff history %"
+      else
+        echo "vimdiff: argument must be an existing file" >&2
+        return 1
+      fi
+      ;;
+    *)
+      echo "Usage:" >&2
+      echo "  vimdiff <file>            # show git history of a file" >&2
+      echo "  vimdiff <file1> <file2>   # diff two files" >&2
+      echo "  vimdiff <dir1>  <dir2>    # diff two directories" >&2
+      return 1
+      ;;
+  esac
+}
+
+vimdiff "$@"
