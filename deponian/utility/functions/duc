@@ -1,0 +1,5 @@
+duc() {
+  docker context use "${1}" && [[ -n ${TMUX} ]] && tmux refresh-client -S
+}
+
+duc "$@"

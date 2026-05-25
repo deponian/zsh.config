@@ -29,25 +29,9 @@ alias gho='gh browse'
 alias K='kubectl'
 alias nodemonitor="sed -n '/^Allocated /,/^Events:/ { /^  [^(]/ p; } ; /^Name: / p'"
 alias kcc='kubectl config current-context'
-# if [[ -z ${TMUX} ]]; then
-#   alias kuc='kubectl config use-context'
-# else
-# kuc() {
-#   kubectl config use-context "${1}"
-#   tmux refresh-client -S
-# }
-# fi
 
 # docker
 alias dcc='docker context show'
-# if [[ -z ${TMUX} ]]; then
-#   alias duc='docker context use'
-# else
-# duc() {
-#   docker context use "${1}"
-#   tmux refresh-client -S
-# }
-# fi
 
 if command -v bat &> /dev/null; then
   alias cat='bat --paging=never --theme="base16" --plain'

@@ -1,0 +1,5 @@
+kuc() {
+  kubectl config use-context "${1}" && [[ -n ${TMUX} ]] && tmux refresh-client -S
+}
+
+kuc "$@"
