@@ -24,7 +24,7 @@
 # Description
 # -----------
 #
-#  Completion script for dart 3.9.0 (https://dart.dev/)
+#  Completion script for dart 3.11.0 (https://dart.dev/)
 #
 # ------------------------------------------------------------------------------
 # Authors
@@ -170,14 +170,14 @@ _dart() {
             '--disable-service-auth-codes[Disables the requirement for an authentication code]' \
             '--enable-service-port-fallback[Use 0 if binding port is failed]' \
             '--root-certs-file=[The path to a file containing the trusted root certificates]:file:_files' \
-            '--root-certs-cache=[The path to a cache directory containing the trusted root certificates]:_files -/' \
+            '--root-certs-cache=[The path to a cache directory containing the trusted root certificates]:file:_files -/' \
             '--trace-loading[Enable tracing of library and script loading]' \
             '--packages=[The path to the package resolution configuration file]:file:_files'\
             '--write-service-info=[Outputs information necessary to connect to the VM service]:service_info:_files' \
             '(--no-dds --dds)--dds[Use the Dart Development Service for enhanced debugging functionality]' \
             '(--no-dds --dds)--no-dds[Not use the Dart Development Service for enhanced debugging functionality]' \
-            '(--no-serve-observatory --serve-observatory)--serve-observatory[Enable hosting Observatory throught the VM service]' \
-            '(--no-serve-observatory --serve-observatory)--no-serve-observatory[Disable hosting Observatory throught the VM service]' \
+            '(--no-serve-observatory --serve-observatory)--serve-observatory[Enable hosting Observatory through the VM service]' \
+            '(--no-serve-observatory --serve-observatory)--no-serve-observatory[Disable hosting Observatory through the VM service]' \
             '(--no-print-dtd --print-dtd)--print-dtd[Prints connection details for the Dart Tooling Daemon]' \
             '(--no-print-dtd --print-dtd)--no-print-dtd[Not print connection details for the Dart Tooling Daemon]' \
             '--enable-experiment=[Enable one or more experimental features]:features:_dart_run_enable_experiment' \
@@ -334,7 +334,7 @@ _dart_pub() {
     '(-v --verbose)'{-v,--verbose}'[Print detailed logging]' \
     '(--color --no-color)--color[Use colors in terminal output]' \
     '(--color --no-color)--no-color[Do not use colors in terminal output]' \
-    '(-C --directory)'{-d,--directory=}'[Run the subcommand in the directory]:dir:_files -/'\
+    '(-C --directory)'{-C,--directory=}'[Run the subcommand in the directory]:dir:_files -/'\
     '1: :_dart_pub_subcommands' \
     '*:: :->arg' \
     && ret=0
@@ -362,6 +362,7 @@ _dart_pub() {
         (add|get|remove|upgrade)
           opts+=(
             '--precompile[Build executables in immediate dependencies]'
+            '--no-example[Do not run "example/" if it exists]'
           )
           ;|
         (get)
@@ -373,6 +374,7 @@ _dart_pub() {
           opts+=(
             '(-f --force)'{-f,--force}'[Publish without confirmation if there are no errors]'
             '--skip-validation[Publish without validation and resolution]'
+            '--ignore-warnings[Do not treat warnings as fatal]'
           )
           ;|
         (upgrade)
@@ -677,7 +679,7 @@ _dart_run_timeline_streams() {
 (( $+functions[_dart_run_enable_experiment] )) ||
 _dart_run_enable_experiment() {
   local -a features=(
-    'augumentations:Augumentations - enhancing declarations from outside'
+    'augumentations:Augmentations - enhancing declarations from outside'
     'const-function:Allow more of the Dart language to be executed in const expression'
     'dot-shorthands:Shorter dot syntax for static accesses'
     'enhanced-parts:Generalize parts to be nested and have exports/imports'
