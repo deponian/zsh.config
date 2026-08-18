@@ -121,15 +121,4 @@ echoti rmkx'
     zle -N zle-line-init _start_application_mode
     zle -N zle-line-finish _stop_application_mode
   fi
-
-  _input_deferred_init_precmd() {
-    if (( ${+functions[history-substring-search-up]} && ${+functions[history-substring-search-down]} )); then
-      local key
-      for key ('^[[A' ${key_info[Up]} '^P') bindkey ${key} history-substring-search-up
-      for key ('^[[B' ${key_info[Down]} '^N') bindkey ${key} history-substring-search-down
-    fi
-    precmd_functions=(${precmd_functions:#_input_deferred_init_precmd})
-    unfunction _input_deferred_init_precmd
-  }
-  autoload -Uz add-zsh-hook && add-zsh-hook precmd _input_deferred_init_precmd
 }
