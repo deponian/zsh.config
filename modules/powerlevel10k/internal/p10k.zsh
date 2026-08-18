@@ -138,6 +138,14 @@ function getColorCode() {
   return 1
 }
 
+function _p9k_codeset_is_utf8() {
+  # Use `case` to survive SH_GLOB.
+  case "${langinfo[CODESET]}" in
+    utf-8|UTF-8|utf8|UTF8) return 0;;
+    *) return 1;;
+  esac
+}
+
 # _p9k_declare <type> <uppercase-name> [default]...
 function _p9k_declare() {
   local -i set=$+parameters[$2]
@@ -1796,7 +1804,7 @@ prompt_dir() {
   if (( $+_POWERLEVEL9K_SHORTEN_DELIMITER )); then
     local delim=$_POWERLEVEL9K_SHORTEN_DELIMITER
   else
-    if [[ $langinfo[CODESET] == (utf|UTF)(-|)8 ]]; then
+    if _p9k_codeset_is_utf8; then
       local delim=$'\u2026'
     else
       local delim='..'
@@ -2257,7 +2265,7 @@ prompt_package() {
 
   P9K_PACKAGE_NAME=$_p9k__cache_val[2]
   P9K_PACKAGE_VERSION=$_p9k__cache_val[3]
-  _p9k_prompt_segment "$0" "cyan" "$_p9k_color1" PACKAGE_ICON 0 '' ${P9K_PACKAGE_VERSION//\%/%%}
+  _p9k_prompt_segment "$0" "cyan" "$_p9k_color1" PACKAGE_ICON 0 '' ${(V)P9K_PACKAGE_VERSION//\%/%%}
 }
 
 ################################################################
@@ -6851,13 +6859,13 @@ function _p9k_restore_special_params() {
 }
 
 function _p9k_on_expand() {
-  (( _p9k__expanded && ! ${+__p9k_instant_prompt_active} )) && [[ "${langinfo[CODESET]}" == (utf|UTF)(-|)8 ]] && return
+  (( _p9k__expanded && ! ${+__p9k_instant_prompt_active} )) && _p9k_codeset_is_utf8 && return
 
   eval "$__p9k_intro_no_locale"
 
-  if [[ $langinfo[CODESET] != (utf|UTF)(-|)8 ]]; then
+  if ! _p9k_codeset_is_utf8; then
     _p9k_restore_special_params
-    if [[ $langinfo[CODESET] != (utf|UTF)(-|)8 ]] && _p9k_init_locale; then
+    if ! _p9k_codeset_is_utf8 && _p9k_init_locale; then
       if [[ -n $LC_ALL ]]; then
         _p9k__real_lc_all=$LC_ALL
         LC_ALL=$__p9k_locale
@@ -7458,7 +7466,7 @@ _p9k_init_params() {
   _p9k_declare -i POWERLEVEL9K_VCS_SHORTEN_LENGTH
   _p9k_declare -i POWERLEVEL9K_VCS_SHORTEN_MIN_LENGTH
   _p9k_declare -s POWERLEVEL9K_VCS_SHORTEN_STRATEGY
-  if [[ $langinfo[CODESET] == (utf|UTF)(-|)8 ]]; then
+  if _p9k_codeset_is_utf8; then
     _p9k_declare -e POWERLEVEL9K_VCS_SHORTEN_DELIMITER '\u2026'
   else
     _p9k_declare -e POWERLEVEL9K_VCS_SHORTEN_DELIMITER '..'
@@ -8399,14 +8407,16 @@ _p9k_init_prompt() {
   if (( _POWERLEVEL9K_TERM_SHELL_INTEGRATION )); then
     _p9k_prompt_prefix_left+=$'%{\e]133;A\a%}'
     _p9k_prompt_suffix_left+=$'%{\e]133;B\a%}'
-    if [[ $TERM_PROGRAM == WarpTerminal ]]; then
+    if [[ $TERM_PROGRAM == WarpTerminal ||
+          ( $TERM_PROGRAM == iTerm.app && $TERM_PROGRAM_VERSION == (3.<7->*|<4->.*) ) ]]; then
       _p9k_prompt_prefix_right=$'%{\e]133;P;k=r\a%}'$_p9k_prompt_prefix_right
       _p9k_prompt_suffix_right+=$'%{\e]133;B\a%}'
     fi
     if (( $+_z4h_iterm_cmd && _z4h_can_save_restore_screen == 1 )); then
       _p9k_prompt_prefix_left+=$'%{\ePtmux;\e\e]133;A\a\e\\%}'
       _p9k_prompt_suffix_left+=$'%{\ePtmux;\e\e]133;B\a\e\\%}'
-      if [[ $TERM_PROGRAM == WarpTerminal ]]; then
+      if [[ $TERM_PROGRAM == WarpTerminal ||
+            ( $TERM_PROGRAM == iTerm.app && $TERM_PROGRAM_VERSION == (3.<7->*|<4->.*) ) ]]; then
         _p9k_prompt_prefix_right=$'%{\ePtmux;\e\e]133;P;k=r\a\e\\%}'$_p9k_prompt_prefix_right
         _p9k_prompt_suffix_right+=$'%{\ePtmux;\e\e]133;B\a\e\\%}'
       fi
@@ -8965,6 +8975,11 @@ _p9k_init() {
     function iterm2_decorate_prompt() {
       typeset -g ITERM2_PRECMD_PS1=$PROMPT
       typeset -g ITERM2_SHOULD_DECORATE_PROMPT=
+      if [[ -n $PS2 && $PS2 != *$'\e]133;A;k=s\a'* && -z ${ITERM2_SQUELCH_PS2_MARK-} &&
+            $TERM_PROGRAM_VERSION == (3.<7->*|<4->.*) ]]; then
+        typeset -g ITERM2_PRECMD_PS2=$PS2
+        PS2=$'%{\e]133;A;k=s\a%}'$PS2$'%{\e]133;B\a%}'
+      fi
     }
   fi
   if (( $+functions[iterm2_precmd] )); then
@@ -9512,7 +9527,7 @@ if [[ $__p9k_dump_file != $__p9k_instant_prompt_dump_file && -n $__p9k_instant_p
   zf_rm -f -- $__p9k_instant_prompt_dump_file{,.zwc} 2>/dev/null
 fi
 
-typeset -g P9K_VERSION=1.20.15
+typeset -g P9K_VERSION=1.20.18
 
 if [[ ${VSCODE_SHELL_INTEGRATION-} == <1-> && ${+__p9k_force_term_shell_integration} == 0 ]]; then
   typeset -gri __p9k_force_term_shell_integration=1

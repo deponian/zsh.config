@@ -1203,7 +1203,7 @@
   # - P9K_PACKAGE_NAME     The value of `name` field in package.json.
   # - P9K_PACKAGE_VERSION  The value of `version` field in package.json.
   #
-  # typeset -g POWERLEVEL9K_PACKAGE_CONTENT_EXPANSION='${P9K_PACKAGE_NAME//\%/%%}@${P9K_PACKAGE_VERSION//\%/%%}'
+  # typeset -g POWERLEVEL9K_PACKAGE_CONTENT_EXPANSION='${(V)P9K_PACKAGE_NAME//\%/%%}@${(V)P9K_PACKAGE_VERSION//\%/%%}'
 
   # Custom icon.
   # typeset -g POWERLEVEL9K_PACKAGE_VISUAL_IDENTIFIER_EXPANSION='⭐'

@@ -27,7 +27,13 @@
   local -a match mbegin mend
   local -i MBEGIN MEND OPTIND
   local MATCH OPTARG IFS=$'\'' \t\n\0'\'
-  typeset -gr __p9k_intro_locale='[[ $langinfo[CODESET] != (utf|UTF)(-|)8 ]] && _p9k_init_locale && { [[ -n $LC_ALL ]] && local LC_ALL=$__p9k_locale || local LC_CTYPE=$__p9k_locale }'
+  # Use `case` to survive SH_GLOB.
+  typeset -gr __p9k_intro_locale='{
+    case "${langinfo[CODESET]}" in
+      utf-8|UTF-8|utf8|UTF8) false;;
+      *) true;;
+    esac
+  } && _p9k_init_locale && { [[ -n "$LC_ALL" ]] && local LC_ALL=$__p9k_locale || local LC_CTYPE=$__p9k_locale }'
   typeset -gr __p9k_intro_no_locale="${${__p9k_intro_base/ match / match reply }/ MATCH / MATCH REPLY }"
   typeset -gr __p9k_intro_no_reply="$__p9k_intro_base; $__p9k_intro_locale"
   typeset -gr __p9k_intro="$__p9k_intro_no_locale; $__p9k_intro_locale"
