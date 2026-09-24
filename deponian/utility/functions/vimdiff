@@ -2,7 +2,7 @@ vimdiff() {
   case $# in
     2)
       if [[ -f $1 && -f $2 ]]; then
-        nvim +"CodeDiff file $1 $2"
+        nvim -d "$1" "$2"
       elif [[ -d $1 && -d $2 ]]; then
         nvim +"CodeDiff dir $1 $2"
       else
